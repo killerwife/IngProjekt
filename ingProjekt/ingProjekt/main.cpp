@@ -1,16 +1,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
-#include <string.h>
+#include <string>
 #include <vector> 
 #include <opencv2/core.hpp>
+#include "opencv2/ml/ml.hpp"
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>  
 #include <opencv2/core/cuda.hpp> 
 #include <opencv2/objdetect.hpp>
 #include <opencv2/cudaobjdetect.hpp>
+#include "Parser.h"
 
-int main(int argc, char* argv[])
+void detection()
 {
     //for time measure  
     float TakeTime;
@@ -25,7 +27,7 @@ int main(int argc, char* argv[])
     cvtColor(img, grayImg, CV_BGR2GRAY);
 
     //load xml file  
-    std::string trainface = ".\\haarcascade_fullbody.xml";
+    std::string trainface = "trainedBoost.xml";
 
     //declaration  
     cv::CascadeClassifier ada_cpu;
@@ -34,7 +36,7 @@ int main(int argc, char* argv[])
     if (!(ada_cpu.load(trainface)))
     {
         printf(" cpu ada xml load fail! \n");
-        return 1;
+        return;
     }
 
     //if (!(ada_gpu.load(trainface)))
@@ -87,5 +89,70 @@ int main(int argc, char* argv[])
     //result display  
     imshow("origin", img);
     cv::waitKey(0);
+}
+
+static cv::Ptr<cv::ml::TrainData>
+prepare_train_data(const cv::Mat& data, const cv::Mat& responses, int ntrain_samples)
+{
+    cv::Mat sample_idx = cv::Mat::zeros(1, data.rows, CV_8U);
+    cv::Mat train_samples = sample_idx.colRange(0, ntrain_samples);
+    train_samples.setTo(cv::Scalar::all(1));
+
+    int nvars = data.cols;
+    cv::Mat var_type(nvars + 1, 1, CV_8U);
+    var_type.setTo(cv::Scalar::all(cv::ml::VAR_ORDERED));
+    var_type.at<uchar>(nvars) = cv::ml::VAR_CATEGORICAL;
+
+    return cv::ml::TrainData::create(data, cv::ml::ROW_SAMPLE, responses,
+        cv::noArray(), sample_idx, cv::noArray(), var_type);
+}
+
+void trainint()
+{
+    Parser parser;
+    cv::Mat* data=nullptr;
+    cv::Mat* responses = nullptr;
+    parser.toMat(&data,&responses);
+    cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
+    cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
+    boost->setBoostType(cv::ml::Boost::DISCRETE);
+    boost->setWeakCount(100);
+    boost->setWeightTrimRate(0.95);
+    boost->setMaxDepth(2);
+    boost->setUseSurrogates(false);
+    boost->setPriors(cv::Mat());
+    boost->setMaxCategories(2);
+    boost->train(trainData); // 'prepare_train_data' returns an instance of ml::TrainData class
+    boost->save("trainedBoost.xml");
+}
+
+void detect()
+{
+    cv::String filename = "trainedBoost.xml";
+    cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
+    boost->setBoostType(cv::ml::Boost::DISCRETE);
+    boost->setWeakCount(100);
+    boost->setWeightTrimRate(0.95);
+    boost->setMaxDepth(2);
+    boost->setUseSurrogates(false);
+    boost->setPriors(cv::Mat());
+    boost->setMaxCategories(2);
+    std::vector< cv::Rect > faces;
+    cv::Mat img = cv::imread("20160323152820826.Png", CV_LOAD_IMAGE_GRAYSCALE);
+    cv::Mat result;
+    img.convertTo(img, CV_32F);
+    img = img.reshape(1,1);
+    boost->predict(img,result);
+    printf("Result: %d\n", result.data[0]);
+}
+
+int main(int argc, char* argv[])
+{
+    //trainint();
+    //detection();
+    detect();
+    //Parser parser;
+    //parser.parseNegatives();
+    //parser.parsePositives();
     return 0;
 }
