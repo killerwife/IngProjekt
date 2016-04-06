@@ -58,15 +58,15 @@ void Parser::parsePositives()
 
 void Parser::toMat(cv::Mat** output, cv::Mat** responses)
 {
-    *output = new cv::Mat(0,0,CV_32F);
-    *responses = new cv::Mat(0, 0, CV_32F);
-    int positive=22, negative=22;
+    *output = new cv::Mat(0, 0, CV_32S);
+    *responses = new cv::Mat(0, 0, CV_32S);
+    int positive=150, negative=200;
     int i = 0;
     cv::Mat image;
-    float arrayPos[1] = {1};
-    cv::Mat pos(1, 1, CV_32F,arrayPos);
-    float arrayNeg[1] = { 0 };
-    cv::Mat neg(1, 1, CV_32F, arrayNeg);
+    int arrayPos[1] = {1};
+    cv::Mat pos(1, 1, CV_32S, arrayPos);
+    int arrayNeg[1] = { 0 };
+    cv::Mat neg(1, 1, CV_32S, arrayNeg);
     std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\*.*";
     std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\*.*";
     std::wstring stemp = std::wstring(tempPos.begin(), tempPos.end());

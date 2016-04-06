@@ -114,16 +114,21 @@ void trainint()
     cv::Mat* responses = nullptr;
     parser.toMat(&data,&responses);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
-    cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
-    boost->setBoostType(cv::ml::Boost::DISCRETE);
+    //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
+    //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
+    //fs1 << "yourMat" << *data;
+    //cv::FileStorage fs2("responses.yml", cv::FileStorage::WRITE);
+    //fs2 << "yourMat" << *responses;
+    boost->setBoostType(cv::ml::Boost::REAL);
     boost->setWeakCount(100);
     boost->setWeightTrimRate(0.95);
-    boost->setMaxDepth(2);
+    boost->setMaxDepth(1);
     boost->setUseSurrogates(false);
-    boost->setPriors(cv::Mat());
-    boost->setMaxCategories(2);
-    boost->train(trainData); // 'prepare_train_data' returns an instance of ml::TrainData class
+    boost->setCVFolds(0);
+    boost->train(cv::Mat(*data), cv::ml::ROW_SAMPLE, cv::Mat(*responses)); // 'prepare_train_data' returns an instance of ml::TrainData class
     boost->save("trainedBoost.xml");
+    delete data;
+    delete responses;
 }
 
 void detect()
@@ -150,7 +155,7 @@ int main(int argc, char* argv[])
 {
     //trainint();
     //detection();
-    detect();
+    trainint();
     //Parser parser;
     //parser.parseNegatives();
     //parser.parsePositives();

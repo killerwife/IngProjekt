@@ -53,3 +53,5 @@ Temporary Items
 *.log
 *.exe
 *.rar
+*.suo
+*.sdf
