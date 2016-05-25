@@ -9,6 +9,6 @@ public:
     ~Parser();
     void Parser::parseNegatives();
     void Parser::parsePositives(); 
-    void Parser::toMat(cv::Mat** output, cv::Mat** responses);
+	void Parser::toMat(cv::Mat** output, cv::Mat** responses, std::string tempPos, std::string tempNeg, int positive, int negative);
 };
 

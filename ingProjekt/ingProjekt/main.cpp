@@ -11,6 +11,7 @@
 #include <opencv2/objdetect.hpp>
 #include <opencv2/cudaobjdetect.hpp>
 #include "Parser.h"
+#include <stdint.h>
 
 void detection()
 {
@@ -112,7 +113,9 @@ void trainint()
     Parser parser;
     cv::Mat* data=nullptr;
     cv::Mat* responses = nullptr;
-    parser.toMat(&data,&responses);
+	std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\*.*";
+	std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\*.*";
+    parser.toMat(&data,&responses,tempPos,tempNeg,500,1000);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
     //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
     //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
@@ -133,29 +136,37 @@ void trainint()
 
 void detect()
 {
+	Parser parser;
+	cv::Mat* data = nullptr;
+	cv::Mat* responses = nullptr;
+	std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
+	std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+	parser.toMat(&data, &responses, tempPos, tempNeg, 5000, 10000);
     cv::String filename = "trainedBoost.xml";
     cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
-    boost->setBoostType(cv::ml::Boost::DISCRETE);
-    boost->setWeakCount(100);
-    boost->setWeightTrimRate(0.95);
-    boost->setMaxDepth(2);
-    boost->setUseSurrogates(false);
-    boost->setPriors(cv::Mat());
-    boost->setMaxCategories(2);
     std::vector< cv::Rect > faces;
-    cv::Mat img = cv::imread("20160323152820826.Png", CV_LOAD_IMAGE_GRAYSCALE);
-    cv::Mat result;
-    img.convertTo(img, CV_32F);
-    img = img.reshape(1,1);
-    boost->predict(img,result);
-    printf("Result: %d\n", result.data[0]);
+	cv::Mat result;
+	boost->predict(*data, result);
+	float *dataz = (float*)result.data;
+	long *resultz = (long*)responses->data;
+	//for (int i = 0; i < data->rows; i++)
+	//{
+	//	printf("Poradove cislo:%d Vysledok:%f Spravny Vysledok: %u\n", i, dataz[i], resultz[i]);
+	//}
+	int spravne=0,nespravne=0;
+	for (int i = 0; i < data->rows; i++)
+	{
+		if (dataz[i] == resultz[i]) spravne++;
+		else nespravne++;
+	}
+	printf("Spravnych vysledkov:%d Nespravnych:%d\n", spravne,nespravne);
 }
 
 int main(int argc, char* argv[])
 {
     //trainint();
-    //detection();
-    trainint();
+    detect();
+    //trainint();
     //Parser parser;
     //parser.parseNegatives();
     //parser.parsePositives();
