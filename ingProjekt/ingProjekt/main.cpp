@@ -111,11 +111,11 @@ prepare_train_data(const cv::Mat& data, const cv::Mat& responses, int ntrain_sam
 void trainint()
 {
     Parser parser;
-    cv::Mat* data=nullptr;
+    cv::Mat* data = nullptr;
     cv::Mat* responses = nullptr;
-	std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\*.*";
-	std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\*.*";
-    parser.toMat(&data,&responses,tempPos,tempNeg,500,1000);
+    std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\*.*";
+    std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\*.*";
+    parser.toMat(&data, &responses, tempPos, tempNeg, 500, 1000);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
     //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
     //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
@@ -136,36 +136,66 @@ void trainint()
 
 void detect()
 {
-	Parser parser;
-	cv::Mat* data = nullptr;
-	cv::Mat* responses = nullptr;
-	std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
-	std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
-	parser.toMat(&data, &responses, tempPos, tempNeg, 5000, 10000);
+    Parser parser;
+    cv::Mat* data = nullptr;
+    cv::Mat* responses = nullptr;
+    std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
+    std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+    parser.toMat(&data, &responses, tempPos, tempNeg, 5000, 10000);
     cv::String filename = "trainedBoost.xml";
     cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
     std::vector< cv::Rect > faces;
-	cv::Mat result;
-	boost->predict(*data, result);
-	float *dataz = (float*)result.data;
-	long *resultz = (long*)responses->data;
-	//for (int i = 0; i < data->rows; i++)
-	//{
-	//	printf("Poradove cislo:%d Vysledok:%f Spravny Vysledok: %u\n", i, dataz[i], resultz[i]);
-	//}
-	int spravne=0,nespravne=0;
-	for (int i = 0; i < data->rows; i++)
-	{
-		if (dataz[i] == resultz[i]) spravne++;
-		else nespravne++;
-	}
-	printf("Spravnych vysledkov:%d Nespravnych:%d\n", spravne,nespravne);
+    cv::Mat result;
+    boost->predict(*data, result);
+    float *dataz = (float*)result.data;
+    long *resultz = (long*)responses->data;
+    //for (int i = 0; i < data->rows; i++)
+    //{
+    //	printf("Poradove cislo:%d Vysledok:%f Spravny Vysledok: %u\n", i, dataz[i], resultz[i]);
+    //}
+    int spravne = 0, nespravne = 0;
+    for (int i = 0; i < data->rows; i++)
+    {
+        if (dataz[i] == resultz[i]) spravne++;
+        else nespravne++;
+    }
+    printf("Spravnych vysledkov:%d Nespravnych:%d\n", spravne, nespravne);
+}
+
+void detectMultiScale()
+{
+    cv::String filename = "trainedBoost.xml";
+    cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
+    cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001768.png");
+    cv::Mat result(img);
+    for (int scale = 8; scale <= 512; scale *= 2)
+    {
+        for (int i = 0; i + scale < img.cols; i += scale)
+        {
+            for (int k = 0; k + scale * 2 < img.rows; k += scale * 2)
+            {
+                cv::Rect rectangleZone(i, k, scale, scale * 2);
+                cv::Mat imagePart = cv::Mat(img, rectangleZone);
+                cv::resize(imagePart, imagePart, cv::Size(96, 160));
+                imagePart.convertTo(imagePart, CV_32F);
+                imagePart = imagePart.reshape(1, 1);
+                cv::Mat response;
+                boost->predict(imagePart, response);
+                long* responses = (long*)response.data;
+                if (responses[0] == 0)
+                    rectangle(result, rectangleZone, (0, 0, 255), 2);
+            }
+        }
+    }
+    imshow("origin", result);
+    cv::waitKey(0);
 }
 
 int main(int argc, char* argv[])
 {
     //trainint();
-    detect();
+    //detect();
+    detectMultiScale();
     //trainint();
     //Parser parser;
     //parser.parseNegatives();
