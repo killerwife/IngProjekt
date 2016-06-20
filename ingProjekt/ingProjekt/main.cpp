@@ -168,13 +168,15 @@ void detectMultiScale()
     cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
     cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001768.png");
     cv::Mat result(img);
-    for (int scale = 8; scale <= 512; scale *= 2)
+	int shift = 4;
+    for (int scale = 4; scale <= 512; scale *= 1.25,shift*=1.25)
     {
-        for (int i = 0; i + scale < img.cols; i += scale)
+		printf("%d\n",scale);
+        for (int i = 0; i + scale * 3 < img.cols; i += shift)
         {
-            for (int k = 0; k + scale * 2 < img.rows; k += scale * 2)
+            for (int k = 0; k + scale * 5 < img.rows; k += shift)
             {
-                cv::Rect rectangleZone(i, k, scale, scale * 2);
+                cv::Rect rectangleZone(i, k, scale*3, scale * 5);
                 cv::Mat imagePart = cv::Mat(img, rectangleZone);
                 cv::resize(imagePart, imagePart, cv::Size(96, 160));
                 imagePart.convertTo(imagePart, CV_32F);
@@ -182,7 +184,7 @@ void detectMultiScale()
                 cv::Mat response;
                 boost->predict(imagePart, response);
                 long* responses = (long*)response.data;
-                if (responses[0] == 0)
+                if (responses[0] != 0)
                     rectangle(result, rectangleZone, (0, 0, 255), 2);
             }
         }
