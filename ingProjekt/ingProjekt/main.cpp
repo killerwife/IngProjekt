@@ -113,9 +113,9 @@ void trainint()
     Parser parser;
     cv::Mat* data = nullptr;
     cv::Mat* responses = nullptr;
-    std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\*.*";
-    std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\*.*";
-    parser.toMat(&data, &responses, tempPos, tempNeg, 500, 1000);
+    std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\";
+    std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+    parser.toMat(&data, &responses, tempPos, tempNeg, 500, 4000);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
     //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
     //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
