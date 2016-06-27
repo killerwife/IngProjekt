@@ -12,6 +12,7 @@
 #include <opencv2/cudaobjdetect.hpp>
 #include "Parser.h"
 #include <stdint.h>
+#include <thread>
 
 void detection()
 {
@@ -108,14 +109,29 @@ prepare_train_data(const cv::Mat& data, const cv::Mat& responses, int ntrain_sam
         cv::noArray(), sample_idx, cv::noArray(), var_type);
 }
 
-void trainint()
+void fillData(cv::Mat** data, cv::Mat** responses, bool backfitting, int countPos, int countNeg, int countBackfit = 0)
 {
     Parser parser;
+    std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
+    std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+    std::string tempNegBackfit = "C:\\GitHubCode\\backfitting\\";
+    *data = new cv::Mat(0, 0, CV_32S);
+    *responses = new cv::Mat(0, 0, CV_32S);
+    int arrayPos[1] = { 0 };
+    cv::Mat pos(1, 1, CV_32S, arrayPos);
+    parser.toMat(data, responses, tempPos, countPos, pos);
+    int arrayNeg[1] = { 1 };
+    cv::Mat neg(1, 1, CV_32S, arrayNeg);
+    parser.toMat(data, responses, tempNeg, countNeg, neg);
+    if (backfitting)
+        parser.toMat(data, responses, tempNegBackfit, countBackfit, neg);
+}
+
+void trainint(bool backfitting, std::string xml)
+{
     cv::Mat* data = nullptr;
     cv::Mat* responses = nullptr;
-    std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\";
-    std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
-    parser.toMat(&data, &responses, tempPos, tempNeg, 500, 4000);
+    fillData(&data, &responses, backfitting, 5000, 10000, 5000);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
     //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
     //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
@@ -129,19 +145,17 @@ void trainint()
     boost->setUseSurrogates(false);
     boost->setCVFolds(0);
     boost->train(cv::Mat(*data), cv::ml::ROW_SAMPLE, cv::Mat(*responses)); // 'prepare_train_data' returns an instance of ml::TrainData class
-    boost->save("trainedBoost.xml");
+    boost->save(xml);
     delete data;
     delete responses;
 }
 
-void detect()
+void detect(bool backfitting)
 {
     Parser parser;
     cv::Mat* data = nullptr;
     cv::Mat* responses = nullptr;
-    std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
-    std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
-    parser.toMat(&data, &responses, tempPos, tempNeg, 5000, 10000);
+    fillData(&data, &responses, backfitting, 40000, 40000, 40000);
     cv::String filename = "trainedBoost.xml";
     cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
     std::vector< cv::Rect > faces;
@@ -162,42 +176,57 @@ void detect()
     printf("Spravnych vysledkov:%d Nespravnych:%d\n", spravne, nespravne);
 }
 
-void detectMultiScale()
+void detectMultiScale(bool exportShit, std::string xml, std::string filename, std::string imageName)
 {
-    cv::String filename = "trainedBoost.xml";
-    cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
-    cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001768.png");
-    cv::Mat result(img);
-	int shift = 4;
-    for (int scale = 4; scale <= 512; scale *= 1.25,shift*=1.25)
+    cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(xml);
+    cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
+    cv::Mat result = img.clone();
+    int shift = 4;
+    int m = 2015;
+    for (int scale = 8; scale <= 512; scale *= 1.25, shift *= 1.25)
     {
-		printf("%d\n",scale);
+        printf("%d\n", scale);
         for (int i = 0; i + scale * 3 < img.cols; i += shift)
         {
             for (int k = 0; k + scale * 5 < img.rows; k += shift)
             {
-                cv::Rect rectangleZone(i, k, scale*3, scale * 5);
+                cv::Rect rectangleZone(i, k, scale * 3, scale * 5);
                 cv::Mat imagePart = cv::Mat(img, rectangleZone);
                 cv::resize(imagePart, imagePart, cv::Size(96, 160));
                 imagePart.convertTo(imagePart, CV_32F);
-                imagePart = imagePart.reshape(1, 1);
+                cv::Mat imagePartInput = imagePart.reshape(1, 1);
                 cv::Mat response;
-                boost->predict(imagePart, response);
+                boost->predict(imagePartInput, response);
                 long* responses = (long*)response.data;
-                if (responses[0] != 0)
+                if (responses[0] == 0)
+                {
                     rectangle(result, rectangleZone, (0, 0, 255), 2);
+                    if (exportShit)
+                    {
+                        cv::imwrite("C:\\GitHubCode\\backfitting\\pic" + std::to_string(m) + ".png", imagePart);
+                        m++;
+                    }
+
+                }
             }
         }
     }
-    imshow("origin", result);
+    cv::imwrite(filename, result);
     cv::waitKey(0);
 }
 
 int main(int argc, char* argv[])
 {
-    //trainint();
-    //detect();
-    detectMultiScale();
+    /*std::thread thread1 = std::thread(trainint, false, "trainedBoostNoBackfit.xml");
+    trainint(true, "trainedBoost.xml");
+    thread1.join();*/
+    //trainint(true, "trainedBoostBackfit2.xml");
+    //detect(true);
+    /*std::thread thread1 = std::thread(detectMultiScale, false, "trainedBoost.xml", "outputBackfit.png");
+    detectMultiScale(false, "trainedBoostNoBackfit.xml", "outputNoBackfit.png");
+    thread1.join();*/
+    detectMultiScale(true, "trainedBoostBackfit2.xml", "outputBackfit2.png","SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001768.png");
+    detectMultiScale(true, "trainedBoostBackfit2.xml", "outputBackfitEmpty.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
     //trainint();
     //Parser parser;
     //parser.parseNegatives();
