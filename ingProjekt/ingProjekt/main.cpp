@@ -131,7 +131,7 @@ void trainint(bool backfitting, std::string xml)
 {
     cv::Mat* data = nullptr;
     cv::Mat* responses = nullptr;
-    fillData(&data, &responses, backfitting, 5000, 10000, 5000);
+    fillData(&data, &responses, backfitting, 5000, 20000, 8000);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
     //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
     //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
@@ -182,7 +182,7 @@ void detectMultiScale(bool exportShit, std::string xml, std::string filename, st
     cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
     cv::Mat result = img.clone();
     int shift = 4;
-    int m = 2015;
+    int m = 8009;
     for (int scale = 8; scale <= 512; scale *= 1.25, shift *= 1.25)
     {
         printf("%d\n", scale);
@@ -225,8 +225,8 @@ int main(int argc, char* argv[])
     /*std::thread thread1 = std::thread(detectMultiScale, false, "trainedBoost.xml", "outputBackfit.png");
     detectMultiScale(false, "trainedBoostNoBackfit.xml", "outputNoBackfit.png");
     thread1.join();*/
-    detectMultiScale(true, "trainedBoostBackfit2.xml", "outputBackfit2.png","SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001768.png");
-    detectMultiScale(true, "trainedBoostBackfit2.xml", "outputBackfitEmpty.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
+    //detectMultiScale(false, "trainedBoostBackfit2.xml", "outputBackfit2.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001768.png");
+    detectMultiScale(false, "trainedBoostBackfit2.xml", "outputEmptyBackfit2.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
     //trainint();
     //Parser parser;
     //parser.parseNegatives();
