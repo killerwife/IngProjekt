@@ -188,47 +188,121 @@ std::vector<cv::Rect> nonMaxSuppression(std::vector<cv::Rect> boundingBoxes, flo
 {
 	std::vector<cv::Rect> result;
 	std::sort(boundingBoxes.begin(), boundingBoxes.end(), RectComparator());
-	for (cv::Rect rect : boundingBoxes)
-		std::cout << rect << "\t";
+	/*for (cv::Rect rect : boundingBoxes)
+		std::cout << rect << "\t";*/
 	std::vector<float> areas;
 	std::vector<int> indexes;
 	std::vector<int> x;
 	std::vector<int> y;
-	std::vector<int> width;
-	std::vector<int> height;
+	std::vector<int> widths;
+	std::vector<int> heights;
 	int i = 0;
 	for (cv::Rect box : boundingBoxes)
 	{
 		indexes.push_back(i++);
 		x.push_back(box.x);
 		y.push_back(box.y);
-		width.push_back(box.width);
-		height.push_back(box.height);
+		widths.push_back(box.width);
+		heights.push_back(box.height);
 		areas.push_back((box.height + 1)*(box.width + 1));
 	}
-	while (indexes.size() > 0)
+	//while (indexes.size() > 0)
+	//{
+	//	int last = indexes.size() - 1;
+	//	auto i = indexes[last];
+	//	result.push_back(boundingBoxes[i]);
+	//	std::vector<int> supress;
+	//	supress.push_back(indexes[last]);
+	//	for (int j : indexes)
+	//	{
+	//		int xx1 = x[i] > x[j] ? x[i] : x[j];
+	//		int yy1 = y[i] > y[j] ? y[i] : y[j];
+	//		int xx2 = x[i] + width[i] < x[j] + width[j] ? x[i] + width[i] : x[j] + width[j];
+	//		int yy2 = y[i] + height[i] < x[j] + height[j] ? x[i] + height[i] : x[j] + height[j];
+	//		float w = xx2 - xx1 + 1 > 0 ? xx2 - xx1 + 1 : 0;
+	//		float h = yy2 - yy1 + 1 > 0 ? yy2 - yy1 + 1 : 0;
+	//		float overlap = w*h / areas[j];
+	//		if (overlap > overlapThreshold)
+	//			supress.push_back(j);
+	//	}
+	//	for (int removalIdx : supress)
+	//		indexes.erase(std::remove(indexes.begin(), indexes.end(), removalIdx), indexes.end());
+	//}
+	for (int i = 0; i < boundingBoxes.size();)
 	{
-		int last = indexes.size() - 1;
-		auto i = indexes[last];
-		result.push_back(boundingBoxes[i]);
-		std::vector<int> supress;
-		supress.push_back(indexes[last]);
-		for (int j : indexes)
+		float maxOverlap = 0;
+		float minSizeDiff = 2;
+		int candidate = -1;
+		for (int j = 0; j < boundingBoxes.size(); j++)
 		{
+			if (i == j)
+				continue;
+
 			int xx1 = x[i] > x[j] ? x[i] : x[j];
 			int yy1 = y[i] > y[j] ? y[i] : y[j];
-			int xx2 = x[i] + width[i] < x[j] + width[j] ? x[i] + width[i] : x[j] + width[j];
-			int yy2 = y[i] + height[i] < x[j] + height[j] ? x[i] + height[i] : x[j] + height[j];
+			int xx2 = x[i] + widths[i] < x[j] + widths[j] ? x[i] + widths[i] : x[j] + widths[j];
+			int yy2 = y[i] + heights[i] < x[j] + heights[j] ? x[i] + heights[i] : x[j] + heights[j];
 			float w = xx2 - xx1 + 1 > 0 ? xx2 - xx1 + 1 : 0;
 			float h = yy2 - yy1 + 1 > 0 ? yy2 - yy1 + 1 : 0;
 			float overlap = w*h / areas[j];
-			if (overlap > overlapThreshold)
-				supress.push_back(j);
+			float areaDiff = areas[i] / areas[j];
+			if (overlap > overlapThreshold && (areaDiff > 0.5 && areaDiff < 2))
+			{
+				if (maxOverlap < overlap || (maxOverlap == overlap && abs(minSizeDiff - 1) > abs(areaDiff - 1)))
+				{
+					candidate = j;
+					maxOverlap = overlap;
+					minSizeDiff = areaDiff;
+				}
+			}
+			//printf("%d\t", j);
 		}
-		for (int removalIdx : supress)
-			indexes.erase(std::remove(indexes.begin(), indexes.end(), removalIdx), indexes.end());
+		//printf("\n%d\n", i);
+		if (candidate != -1)
+		{
+			int height;
+			int width;
+			if (boundingBoxes[i].area() < boundingBoxes[candidate].area())
+			{
+				height = boundingBoxes[candidate].height;
+				width = boundingBoxes[candidate].width;
+			}
+			else
+			{
+				height = boundingBoxes[i].height;
+				width = boundingBoxes[i].width;
+			}
+			int middleX = abs(boundingBoxes[i].x + boundingBoxes[i].width / 2 - (boundingBoxes[i].x + boundingBoxes[i].width / 2)) / 2;
+			int middleY = abs(boundingBoxes[i].y + boundingBoxes[i].height / 2 - (boundingBoxes[i].y + boundingBoxes[i].height / 2)) / 2;
+			int coordX = middleX - width / 2;
+			int coordY = middleY - height / 2;
+			boundingBoxes.push_back(cv::Rect(coordX, coordY, width, height));
+			areas.push_back((height + 1)*(width + 1));
+			x.push_back(coordX);
+			y.push_back(coordY);
+			widths.push_back(width);
+			heights.push_back(height);
+			boundingBoxes.erase(boundingBoxes.begin() + i);
+			areas.erase(areas.begin() + i);
+			x.erase(x.begin() + i);
+			y.erase(y.begin() + i);
+			widths.erase(widths.begin() + i);
+			heights.erase(heights.begin() + i);
+			if (i < candidate)
+				candidate--;
+			boundingBoxes.erase(boundingBoxes.begin() + candidate);
+			areas.erase(areas.begin() + candidate);
+			x.erase(x.begin() + candidate);
+			y.erase(y.begin() + candidate);
+			widths.erase(widths.begin() + candidate);
+			heights.erase(heights.begin() + candidate);
+			//printf("Joined %d and %d\n", i, candidate);
+			i = 0;
+		}
+		else
+			i++;
 	}
-	return result;
+	return boundingBoxes;
 }
 
 void detectMultiScale(bool exportShit, std::string xml, std::string filename, std::string imageName)
@@ -237,7 +311,7 @@ void detectMultiScale(bool exportShit, std::string xml, std::string filename, st
 	cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
 	cv::Mat result = img.clone();
 	std::vector<cv::Rect> boundingBoxes;
-	FILE * file = fopen("rects.txt","w");
+	FILE * file = fopen("rects.txt", "w");
 	int shift = 4;
 	int m = 8009;
 	for (int scale = 8; scale <= 512; scale *= 1.25, shift *= 1.25)
@@ -259,7 +333,7 @@ void detectMultiScale(bool exportShit, std::string xml, std::string filename, st
 				{
 					//rectangle(result, rectangleZone, (0, 0, 255), 2);
 					boundingBoxes.push_back(rectangleZone);
-					fprintf(file,"%d %d %d %d\n",rectangleZone.x,rectangleZone.y,rectangleZone.width,rectangleZone.height);
+					fprintf(file, "%d %d %d %d\n", rectangleZone.x, rectangleZone.y, rectangleZone.width, rectangleZone.height);
 					if (exportShit)
 					{
 						cv::imwrite("C:\\GitHubCode\\backfitting\\pic" + std::to_string(m) + ".png", imagePart);
@@ -285,16 +359,15 @@ void rectOnly(std::string imageName)
 	FILE * file = fopen("rects.txt", "r");
 	std::vector<cv::Rect> rects;
 	cv::Rect temp;
-	while (fscanf(file,"%d%d%d%d", &temp.x, &temp.y, &temp.width, &temp.height) != EOF)
+	while (fscanf(file, "%d%d%d%d", &temp.x, &temp.y, &temp.width, &temp.height) != EOF)
 		rects.push_back(temp);
-
 	cv::Mat result = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
-	auto resultBoundingBoxes = nonMaxSuppression(rects, 0.8);
-	for (cv::Rect& box : resultBoundingBoxes)
+	//auto resultBoundingBoxes = nonMaxSuppression(rects, 0.5);
+	for (cv::Rect& box : rects)
 	{
 		rectangle(result, box, (0, 0, 255), 2);
 	}
-	cv::imwrite("trieska.png",result);
+	cv::imwrite("trieska.png", result);
 	cv::waitKey(0);
 	fclose(file);
 }
