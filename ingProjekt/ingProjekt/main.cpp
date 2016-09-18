@@ -144,7 +144,7 @@ void trainint(bool backfitting, std::string xml, std::string sampleFolders[3])
 {
     cv::Mat* data = nullptr;
     cv::Mat* responses = nullptr;
-    fillData(&data, &responses, backfitting, 5000, 20000,sampleFolders, 8000);
+    fillData(&data, &responses, backfitting, 5000, 20000, sampleFolders, 8000);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
     //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
     //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
@@ -163,7 +163,7 @@ void trainint(bool backfitting, std::string xml, std::string sampleFolders[3])
     delete responses;
 }
 
-void detect(std::string filename ,bool backfitting,std::string sampleFolders[3])
+void detect(std::string filename, bool backfitting, std::string sampleFolders[3])
 {
     Parser parser;
     cv::Mat* data = nullptr;
@@ -252,7 +252,7 @@ std::vector<cv::Rect> nonMaxSuppression(std::vector<cv::Rect> boundingBoxes, flo
     //	for (int removalIdx : supress)
     //		indexes.erase(std::remove(indexes.begin(), indexes.end(), removalIdx), indexes.end());
     //}
-	std::vector<int> candidates;
+    //std::vector<int> candidates;
     for (int i = 0; i < boundingBoxes.size();)
     {
         int candidate = -1;
@@ -267,40 +267,30 @@ std::vector<cv::Rect> nonMaxSuppression(std::vector<cv::Rect> boundingBoxes, flo
             int yy2 = y[i] + heights[i] < x[j] + heights[j] ? x[i] + heights[i] : x[j] + heights[j];
             double w = xx2 - xx1 + 1 > 0 ? xx2 - xx1 + 1 : 0;
             double h = yy2 - yy1 + 1 > 0 ? yy2 - yy1 + 1 : 0;
-            double overlap = w*h / areas[j];
+            double overlap = w*h / (areas[j]+areas[i]);
             double areaDiff = areas[i] / areas[j];
-            if (overlap > overlapThreshold && (areaDiff > 1.f/multiplier && areaDiff < multiplier))
+            if (overlap > overlapThreshold && (areaDiff > 1.f / multiplier && areaDiff < multiplier))
             {
-				candidates.push_back(j);
-				candidate = j;
-				break;
+                //candidates.push_back(j);
+                candidate = j;
+                break;
             }
             //printf("%d\t", j);
         }
         //printf("\n%d\n", i);
         if (candidate != -1) // TODO: add joining of several bounding boxes at once
         {
-            int height;
-            int width;
-            if (boundingBoxes[i].area() < boundingBoxes[candidate].area())
-            {
-                height = boundingBoxes[candidate].height;
-                width = boundingBoxes[candidate].width;
-            }
-            else
-            {
-                height = boundingBoxes[i].height;
-                width = boundingBoxes[i].width;
-            }
+            int height = (heights[i] + heights[candidate]) / 2;
+            int width = (widths[i] + widths[candidate]) / 2;
             int finalWeight = weights[candidate] + weights[i];
-            int middleFirstX = boundingBoxes[i].x + boundingBoxes[i].width / 2;
-            int middleSecondX = (boundingBoxes[candidate].x + boundingBoxes[candidate].width / 2);
-            int middleFirstY = boundingBoxes[i].y + boundingBoxes[i].height / 2;
-            int middleSecondY = (boundingBoxes[candidate].y + boundingBoxes[candidate].height / 2);
+            int middleFirstX = x[i] + widths[i] / 2;
+            int middleSecondX = ((x[candidate] + widths[candidate]) / 2);
+            int middleFirstY = (y[i] + heights[i]) / 2;
+            int middleSecondY = ((y[candidate] + heights[candidate]) / 2);
             int middleX = (int)((double)abs(middleFirstX - middleSecondX) / finalWeight*weights[candidate]);
             int middleY = (int)((double)abs(middleFirstY - middleSecondY) / finalWeight*weights[candidate]);
-            int coordX = middleX - width / 2 + boundingBoxes[i].x>boundingBoxes[candidate].x ? boundingBoxes[candidate].x : boundingBoxes[i].x;
-            int coordY = middleY - height / 2 + boundingBoxes[i].y>boundingBoxes[candidate].y ? boundingBoxes[candidate].y : boundingBoxes[i].y;
+            int coordX = middleX - width / 2 + x[i]>x[candidate] ? x[candidate] : x[i];
+            int coordY = middleY - height / 2 + y[i] > y[candidate] ? y[candidate] : y[i];
             boundingBoxes.push_back(cv::Rect(coordX, coordY, width, height));
             areas.push_back((height + 1)*(width + 1));
             x.push_back(coordX);
@@ -342,7 +332,7 @@ imageName is the image upon which we want to launch the detection algorithm
 void detectMultiScale(bool exportShit, std::string xml, std::string filename, std::string imageName)
 {
     cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(xml);
-	cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
+    cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
     //cv::Mat img = cv::imread("C:\\GitHubCode\\IngProjekt\\ingProjekt\\ingProjekt\\" + imageName);
     cv::Mat result = img.clone();
     std::vector<cv::Rect> boundingBoxes;
@@ -401,12 +391,14 @@ void rectOnly(std::string imageName)
     while (fscanf(file, "%d%d%d%d", &temp.x, &temp.y, &temp.width, &temp.height) != EOF)
         rects.push_back(temp);
     cv::Mat result = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
-    auto resultBoundingBoxes = nonMaxSuppression(rects, 0.5, 4);
+    //cv::imshow("bla", result);
+    //cv::waitKey(0);
+    auto resultBoundingBoxes = nonMaxSuppression(rects, 0.3, 4);
     for (cv::Rect& box : resultBoundingBoxes)
     {
         rectangle(result, box, (0, 0, 255), 2);
     }
-    cv::imwrite("trieska.png", result);
+    cv::imwrite("trieska2.png", result);
     cv::waitKey(0);
     fclose(file);
 }
@@ -420,24 +412,25 @@ int main(int argc, char* argv[])
     /*std::thread thread1 = std::thread(trainint, false, "trainedBoostNoBackfit.xml");
     trainint(true, "trainedBoost.xml");
     thread1.join();*/
-	std::string sampleFolders[3];
-	sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
-	sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
-	sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
+    std::string sampleFolders[3];
+    sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
+    sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+    sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
     //trainint(true, "trainedBoostFinal3.xml",sampleFolders);
     //detect(true);
     /*std::thread thread1 = std::thread(detectMultiScale, false, "trainedBoost.xml", "outputBackfit.png");
     detectMultiScale(false, "trainedBoostNoBackfit.xml", "outputNoBackfit.png");
     thread1.join();*/
-	/*
-	std::string sampleFolders[3];
-	sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
+    /*
+    std::string sampleFolders[3];
+    sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
     sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
     sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
-	*/
-    //rectOnly("SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
+    */
+    rectOnly("SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002000.png");
     //detectMultiScale(true, "trainedBoostFinal2.xml", "outputFinal2.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
-    detectMultiScale(false, "trainedBoostFinal0.xml", "outputFinalNotBackfitted.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
+    //detectMultiScale(false, "trainedBoostFinal0.xml", "outputFinalNotBackfitted1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002000.png");
+    //detectMultiScale(false, "trainedBoostFinal3.xml", "outputFinalBackfitted1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002000.png");
     //trainint();
     //Parser parser;
     //parser.parseNegatives();
