@@ -17,8 +17,8 @@
 void detection()
 {
     //for time measure  
-    float TakeTime;
-    unsigned long Atime, Btime;
+    double TakeTime;
+    unsigned long long Atime, Btime;
 
     //window  
     cv::namedWindow("origin");
@@ -109,29 +109,42 @@ prepare_train_data(const cv::Mat& data, const cv::Mat& responses, int ntrain_sam
         cv::noArray(), sample_idx, cv::noArray(), var_type);
 }
 
-void fillData(cv::Mat** data, cv::Mat** responses, bool backfitting, int countPos, int countNeg, int countBackfit = 0)
+/*
+Fills data matrices with the following:
+data is filled with one row per picture, responses is filed with one response value per picture
+backfitting specifies whether a secondary false positive folder should be used
+countPos, countNeg and countBackfit specify amounts of each respective cathegory
+sampleFolders[0] specifies folder for positive samples
+sampleFolders[1] specifies folder for negative samples
+sampleFolders[2] specifies folder for backfitting samples
+*/
+void fillData(cv::Mat** data, cv::Mat** responses, bool backfitting, int countPos, int countNeg, std::string sampleFolders[3], int countBackfit = 0)
 {
     Parser parser;
-    std::string tempPos = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
-    std::string tempNeg = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
-    std::string tempNegBackfit = "C:\\GitHubCode\\backfitting\\";
     *data = new cv::Mat(0, 0, CV_32S);
     *responses = new cv::Mat(0, 0, CV_32S);
     int arrayPos[1] = { 0 };
     cv::Mat pos(1, 1, CV_32S, arrayPos);
-    parser.toMat(data, responses, tempPos, countPos, pos);
+    parser.toMat(data, responses, sampleFolders[0], countPos, pos);
     int arrayNeg[1] = { 1 };
     cv::Mat neg(1, 1, CV_32S, arrayNeg);
-    parser.toMat(data, responses, tempNeg, countNeg, neg);
+    parser.toMat(data, responses, sampleFolders[1], countNeg, neg);
     if (backfitting)
-        parser.toMat(data, responses, tempNegBackfit, countBackfit, neg);
+        parser.toMat(data, responses, sampleFolders[2], countBackfit, neg);
 }
 
-void trainint(bool backfitting, std::string xml)
+/*
+Trains an XML with sample data.
+Backfitting specifies whether a secondary false negative folder should be used.
+sampleFolders[0] specifies folder for positive samples
+sampleFolders[1] specifies folder for negative samples
+sampleFolders[2] specifies folder for backfitting samples
+*/
+void trainint(bool backfitting, std::string xml, std::string sampleFolders[3])
 {
     cv::Mat* data = nullptr;
     cv::Mat* responses = nullptr;
-    fillData(&data, &responses, backfitting, 5000, 20000, 8000);
+    fillData(&data, &responses, backfitting, 5000, 20000,sampleFolders, 8000);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
     //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
     //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
@@ -150,13 +163,12 @@ void trainint(bool backfitting, std::string xml)
     delete responses;
 }
 
-void detect(bool backfitting)
+void detect(std::string filename ,bool backfitting,std::string sampleFolders[3])
 {
     Parser parser;
     cv::Mat* data = nullptr;
     cv::Mat* responses = nullptr;
-    fillData(&data, &responses, backfitting, 40000, 40000, 40000);
-    cv::String filename = "trainedBoost.xml";
+    fillData(&data, &responses, backfitting, 40000, 40000, sampleFolders, 40000);
     cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
     std::vector< cv::Rect > faces;
     cv::Mat result;
@@ -176,6 +188,10 @@ void detect(bool backfitting)
     printf("Spravnych vysledkov:%d Nespravnych:%d\n", spravne, nespravne);
 }
 
+/*
+Comparator for sorting cv::Rect according to our needs
+Currently unused
+*/
 struct RectComparator
 {
     bool operator()(cv::Rect a, cv::Rect b)
@@ -184,13 +200,19 @@ struct RectComparator
     }
 };
 
-std::vector<cv::Rect> nonMaxSuppression(std::vector<cv::Rect> boundingBoxes, float overlapThreshold)
+/*
+Performs flavor of non-maximum-suppression upon boundingBoxes, which contains all detected rectangles.
+Overlap threshold is usually set to between 0.3-0.5.
+Multiplier specifies the maximum area difference two bounding boxes can have to still be joined together
+Multiplier 4 generally means a bounding box 2x the size
+*/
+std::vector<cv::Rect> nonMaxSuppression(std::vector<cv::Rect> boundingBoxes, float overlapThreshold, int multiplier)
 {
     std::vector<cv::Rect> result;
-    std::sort(boundingBoxes.begin(), boundingBoxes.end(), RectComparator());
+    //std::sort(boundingBoxes.begin(), boundingBoxes.end(), RectComparator());
     /*for (cv::Rect rect : boundingBoxes)
         std::cout << rect << "\t";*/
-    std::vector<float> areas;
+    std::vector<double> areas;
     std::vector<int> indexes;
     std::vector<int> x;
     std::vector<int> y;
@@ -230,10 +252,9 @@ std::vector<cv::Rect> nonMaxSuppression(std::vector<cv::Rect> boundingBoxes, flo
     //	for (int removalIdx : supress)
     //		indexes.erase(std::remove(indexes.begin(), indexes.end(), removalIdx), indexes.end());
     //}
+	std::vector<int> candidates;
     for (int i = 0; i < boundingBoxes.size();)
     {
-        float maxOverlap = 0;
-        float minSizeDiff = 2;
         int candidate = -1;
         for (int j = 0; j < boundingBoxes.size(); j++)
         {
@@ -244,23 +265,20 @@ std::vector<cv::Rect> nonMaxSuppression(std::vector<cv::Rect> boundingBoxes, flo
             int yy1 = y[i] > y[j] ? y[i] : y[j];
             int xx2 = x[i] + widths[i] < x[j] + widths[j] ? x[i] + widths[i] : x[j] + widths[j];
             int yy2 = y[i] + heights[i] < x[j] + heights[j] ? x[i] + heights[i] : x[j] + heights[j];
-            float w = xx2 - xx1 + 1 > 0 ? xx2 - xx1 + 1 : 0;
-            float h = yy2 - yy1 + 1 > 0 ? yy2 - yy1 + 1 : 0;
-            float overlap = w*h / areas[j];
-            float areaDiff = areas[i] / areas[j];
-            if (overlap > overlapThreshold && (areaDiff > 0.5 && areaDiff < 2))
+            double w = xx2 - xx1 + 1 > 0 ? xx2 - xx1 + 1 : 0;
+            double h = yy2 - yy1 + 1 > 0 ? yy2 - yy1 + 1 : 0;
+            double overlap = w*h / areas[j];
+            double areaDiff = areas[i] / areas[j];
+            if (overlap > overlapThreshold && (areaDiff > 1.f/multiplier && areaDiff < multiplier))
             {
-                if (maxOverlap < overlap || (maxOverlap == overlap && abs(minSizeDiff - 1) > abs(areaDiff - 1)))
-                {
-                    candidate = j;
-                    maxOverlap = overlap;
-                    minSizeDiff = areaDiff;
-                }
+				candidates.push_back(j);
+				candidate = j;
+				break;
             }
             //printf("%d\t", j);
         }
         //printf("\n%d\n", i);
-        if (candidate != -1)
+        if (candidate != -1) // TODO: add joining of several bounding boxes at once
         {
             int height;
             int width;
@@ -315,16 +333,23 @@ std::vector<cv::Rect> nonMaxSuppression(std::vector<cv::Rect> boundingBoxes, flo
     return boundingBoxes;
 }
 
+/*
+Multiscale detection using a trained boost model.
+exportShit specifies whether found detection regions should be exported into images on the hard drive (used for backfitting)
+filename is the path used for saving final detection result
+imageName is the image upon which we want to launch the detection algorithm
+*/
 void detectMultiScale(bool exportShit, std::string xml, std::string filename, std::string imageName)
 {
     cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(xml);
-    cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
+	cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
+    //cv::Mat img = cv::imread("C:\\GitHubCode\\IngProjekt\\ingProjekt\\ingProjekt\\" + imageName);
     cv::Mat result = img.clone();
     std::vector<cv::Rect> boundingBoxes;
     FILE * file = fopen("rects.txt", "w");
     int shift = 4;
-    int m = 8009;
-    for (int scale = 8; scale <= 512; scale *= 1.25, shift *= 1.25)
+    int m = 32000;
+    for (int scale = 8; scale <= 512; scale *= 1.25f, shift *= 1.25f)
     {
         printf("%d\n", scale);
         for (int i = 0; i + scale * 3 < img.cols; i += shift)
@@ -354,7 +379,7 @@ void detectMultiScale(bool exportShit, std::string xml, std::string filename, st
             }
         }
     }
-    auto resultBoundingBoxes = nonMaxSuppression(boundingBoxes, 0.3);
+    auto resultBoundingBoxes = nonMaxSuppression(boundingBoxes, 0.3f, 4);
     for (cv::Rect& box : resultBoundingBoxes)
     {
         rectangle(result, box, (0, 0, 255), 2);
@@ -364,6 +389,10 @@ void detectMultiScale(bool exportShit, std::string xml, std::string filename, st
     fclose(file);
 }
 
+/*
+Function for non-maximum-suppression testing.
+Enables quick loading of rectangles from file instead of requiring a detection algorithm run.
+*/
 void rectOnly(std::string imageName)
 {
     FILE * file = fopen("rects.txt", "r");
@@ -372,7 +401,7 @@ void rectOnly(std::string imageName)
     while (fscanf(file, "%d%d%d%d", &temp.x, &temp.y, &temp.width, &temp.height) != EOF)
         rects.push_back(temp);
     cv::Mat result = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
-    auto resultBoundingBoxes = nonMaxSuppression(rects, 0.5);
+    auto resultBoundingBoxes = nonMaxSuppression(rects, 0.5, 4);
     for (cv::Rect& box : resultBoundingBoxes)
     {
         rectangle(result, box, (0, 0, 255), 2);
@@ -382,19 +411,33 @@ void rectOnly(std::string imageName)
     fclose(file);
 }
 
+/*
+ocasovat cpu boost a gpu boost, trening a detekcia niekolkych obrazkov
+*/
+
 int main(int argc, char* argv[])
 {
     /*std::thread thread1 = std::thread(trainint, false, "trainedBoostNoBackfit.xml");
     trainint(true, "trainedBoost.xml");
     thread1.join();*/
-    //trainint(true, "trainedBoostBackfit2.xml");
+	std::string sampleFolders[3];
+	sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
+	sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+	sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
+    //trainint(true, "trainedBoostFinal3.xml",sampleFolders);
     //detect(true);
     /*std::thread thread1 = std::thread(detectMultiScale, false, "trainedBoost.xml", "outputBackfit.png");
     detectMultiScale(false, "trainedBoostNoBackfit.xml", "outputNoBackfit.png");
     thread1.join();*/
-    rectOnly("SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
-    //detectMultiScale(false, "trainedBoostBackfit2.xml", "outputBackfit2.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001768.png");
-    //detectMultiScale(false, "trainedBoostBackfit1.xml", "outputEmptyBackfitSupression.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
+	/*
+	std::string sampleFolders[3];
+	sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
+    sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+    sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
+	*/
+    //rectOnly("SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
+    //detectMultiScale(true, "trainedBoostFinal2.xml", "outputFinal2.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
+    detectMultiScale(false, "trainedBoostFinal0.xml", "outputFinalNotBackfitted.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
     //trainint();
     //Parser parser;
     //parser.parseNegatives();
