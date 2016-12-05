@@ -10,7 +10,12 @@ HaarTransform::~HaarTransform()
 {
 }
 
-float HaarTransform::GetFeature(cv::Mat &img, cv::Mat &mask)
+void HaarTransform::SetImages(std::vector<cv::Mat>& images)
 {
 
+}
+
+void HaarTransform::GetFeature(std::vector<cv::Mat>& resultSet)
+{
+	
 }
