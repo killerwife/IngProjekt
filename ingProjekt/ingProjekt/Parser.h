@@ -14,6 +14,7 @@ public:
 	and responses per picture loaded. Response is generally 0 or 1, based on whether given folder contains positive or negative pictures.
 	WARNING: Windows only solution
 	*/
-    void Parser::toMat(cv::Mat** output, cv::Mat** responses, std::string location, int count, cv::Mat response);
+    void Parser::toMat(cv::Mat& output, cv::Mat& responses, std::string location, int count, cv::Mat response);
+    void Parser::toMat(std::vector<cv::Mat>& output, cv::Mat& responses, std::string location, int count, cv::Mat response);
 };
 
