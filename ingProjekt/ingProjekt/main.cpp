@@ -231,62 +231,6 @@ std::vector<cv::Rect> nonMaxSuppression(std::vector<cv::Rect> boundingBoxes, flo
 }
 
 /*
-Multiscale detection using a trained boost model.
-exportShit specifies whether found detection regions should be exported into images on the hard drive (used for backfitting)
-filename is the path used for saving final detection result
-imageName is the image upon which we want to launch the detection algorithm
-*/
-void detectMultiScale(bool exportShit, std::string xml, std::string filename, std::string imageName)
-{
-    cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(xml);
-    cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
-    //cv::Mat img = cv::imread("C:\\GitHubCode\\IngProjekt\\ingProjekt\\ingProjekt\\" + imageName);
-    cv::Mat result = img.clone();
-    std::vector<cv::Rect> boundingBoxes;
-    FILE * file = fopen("rects.txt", "w");
-    int shift = 4;
-    int m = 32000;
-    for (int scale = 8; scale <= 512; scale *= 1.25f, shift *= 1.25f)
-    {
-        printf("%d\n", scale);
-        for (int i = 0; i + scale * 3 < img.cols; i += shift)
-        {
-            for (int k = 0; k + scale * 5 < img.rows; k += shift)
-            {
-                cv::Rect rectangleZone(i, k, scale * 3, scale * 5);
-                cv::Mat imagePart = cv::Mat(img, rectangleZone);
-                cv::resize(imagePart, imagePart, cv::Size(96, 160));
-                imagePart.convertTo(imagePart, CV_32F);
-                cv::Mat imagePartInput = imagePart.reshape(1, 1);
-                cv::Mat response;
-                boost->predict(imagePartInput, response);
-                long* responses = (long*)response.data;
-                if (responses[0] == 0)
-                {
-                    //rectangle(result, rectangleZone, (0, 0, 255), 2);
-                    boundingBoxes.push_back(rectangleZone);
-                    fprintf(file, "%d %d %d %d\n", rectangleZone.x, rectangleZone.y, rectangleZone.width, rectangleZone.height);
-                    if (exportShit)
-                    {
-                        cv::imwrite("C:\\GitHubCode\\backfitting\\pic" + std::to_string(m) + ".png", imagePart);
-                        m++;
-                    }
-
-                }
-            }
-        }
-    }
-    auto resultBoundingBoxes = nonMaxSuppression(boundingBoxes, 0.3f, 4);
-    for (cv::Rect& box : resultBoundingBoxes)
-    {
-        rectangle(result, box, (0, 0, 255), 2);
-    }
-    cv::imwrite(filename, result);
-    cv::waitKey(0);
-    fclose(file);
-}
-
-/*
 Function for non-maximum-suppression testing.
 Enables quick loading of rectangles from file instead of requiring a detection algorithm run.
 */
@@ -334,7 +278,7 @@ int main(int argc, char* argv[])
     sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
     sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
     */
-    rectOnly("SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002000.png");
+    //rectOnly("SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002000.png");
     //detectMultiScale(true, "trainedBoostFinal2.xml", "outputFinal2.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
     //detectMultiScale(false, "trainedBoostFinal0.xml", "outputFinalNotBackfitted1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002000.png");
     //detectMultiScale(false, "trainedBoostFinal3.xml", "outputFinalBackfitted1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002000.png");
@@ -342,5 +286,9 @@ int main(int argc, char* argv[])
     //Parser parser;
     //parser.parseNegatives();
     //parser.parsePositives();
+	Evaluator eval;
+	//eval.trainint(false,"HaarXML.xml",sampleFolders);
+	//eval.detect(false, "HaarXML.xml",sampleFolders);
+	eval.detectMultiScale(false, "HaarXML.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001873.png");
     return 0;
 }

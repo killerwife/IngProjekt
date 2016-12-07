@@ -25,7 +25,9 @@ public:
     void fillData(std::vector<cv::Mat>& data, cv::Mat& responses, bool backfitting, int countPos, int countNeg, std::string sampleFolders[3], int countBackfit = 0);
 
     void trainintRawImage(bool backfitting, std::string xml, std::string sampleFolders[3]);
+	void detectRawImage(std::string filename, bool backfitting, std::string sampleFolders[3]);
     void trainint(bool backfitting, std::string xml, std::string sampleFolders[3]);
-    void detect(std::string filename, bool backfitting, std::string sampleFolders[3]);
+	void detect(bool backfitting, std::string filename, std::string sampleFolders[3]);
+	void detectMultiScale(bool exportShit, std::string xml, std::string filename, std::string imageName);
 };
 
