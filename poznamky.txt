@@ -1,0 +1,5 @@
+Boost implementacia - cascade
+
+paralelny vypocet hodnot featur
+zdedenie od stareho decision tree v 2.4.x
+vela * a málo referencii
