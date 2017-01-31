@@ -12,10 +12,10 @@
     <use_surrogates>0</use_surrogates>
     <max_categories>10</max_categories>
     <regression_accuracy>9.9999997764825821e-003</regression_accuracy>
-    <max_depth>1</max_depth>
+    <max_depth>2</max_depth>
     <min_sample_count>10</min_sample_count>
     <cross_validation_folds>0</cross_validation_folds>
-    <weight_trimming_rate>9.4999999999999996e-001</weight_trimming_rate></training_params>
+    <weight_trimming_rate>9.7999999999999998e-001</weight_trimming_rate></training_params>
   <global_var_idx>1</global_var_idx>
   <var_idx>
     0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
@@ -555,600 +555,600 @@
       <nodes>
         <_>
           <depth>0</depth>
-          <value>7.0329955202396910e-001</value>
+          <value>6.9414868289703768e-001</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>1.6431300764452181e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.4757973449141297e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>4.8849813083506769e-015</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-1.8651746813702456e-014</value>
+          <value>2.6645352591004114e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>2.7977620220554336e-014</value>
+          <value>5.7731597280509806e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.3766765505352036e-014</value>
+          <value>-3.0186964039562560e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.2204460492503377e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8191672047106117e-014</value>
+          <value>1.3755663275106636e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.5876189252139865e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.2648549702353449e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8191672047106117e-014</value>
+          <value>5.4622972811559191e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1546319456102294e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0597746558673994e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3722356584367876e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>5.4622972811559191e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1546319456102294e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0597746558673994e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3666845433136611e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>5.4178883601709110e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1501910535117283e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0597746558673994e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3666845433136611e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>5.4178883601709110e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1501910535117283e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0564439867935230e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3666845433136611e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>5.4178883601709110e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1501910535117283e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0564439867935230e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3666845433136611e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>5.4178883601709110e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1501910535117283e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0564439867935230e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3666845433136611e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>5.4178883601709110e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1501910535117283e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0564439867935230e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3666845433136611e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>5.4178883601709110e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1501910535117283e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0564439867935230e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3666845433136611e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>5.4178883601709110e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1501910535117283e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0564439867935230e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3666845433136611e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>5.4178883601709110e-014</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.1501910535117283e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>-3.0564439867935230e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-2.3980817331903668e-014</value>
-          <norm_class_idx>0</norm_class_idx></_></nodes></_>
-    <_>
-      <nodes>
-        <_>
-          <depth>0</depth>
-          <value>3.8302694349568633e-014</value>
+          <value>1.3666845433136611e-013</value>
           <norm_class_idx>1</norm_class_idx></_></nodes></_>
     <_>
       <nodes>
         <_>
           <depth>0</depth>
-          <value>-1.4210854715202105e-014</value>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
+          <norm_class_idx>0</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.3666845433136611e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>5.4178883601709110e-014</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>1.1501910535117283e-013</value>
+          <norm_class_idx>1</norm_class_idx></_></nodes></_>
+    <_>
+      <nodes>
+        <_>
+          <depth>0</depth>
+          <value>-3.0564439867935230e-013</value>
           <norm_class_idx>0</norm_class_idx></_></nodes></_></trees></opencv_ml_boost>
 </opencv_storage>

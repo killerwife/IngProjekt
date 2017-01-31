@@ -121,7 +121,7 @@ void Evaluator::trainint(bool backfitting, std::string xml, std::string sampleFo
 {
     std::vector<cv::Mat> data;
     cv::Mat responses;
-    fillData(data, responses, backfitting, 100, 200, sampleFolders, 200);
+    fillData(data, responses, backfitting, 1000, 2000, sampleFolders, 200);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
 	HaarTransform transform(data.size(),data[0].size());
 	transform.SetImages(data, responses);
@@ -132,10 +132,10 @@ void Evaluator::trainint(bool backfitting, std::string xml, std::string sampleFo
     //fs1 << "yourMat" << *data;
     //cv::FileStorage fs2("responses.yml", cv::FileStorage::WRITE);
     //fs2 << "yourMat" << *responses;
-    boost->setBoostType(cv::ml::Boost::REAL);
+    boost->setBoostType(cv::ml::Boost::DISCRETE);
     boost->setWeakCount(100);
-    boost->setWeightTrimRate(0.95);
-    boost->setMaxDepth(1);
+    boost->setWeightTrimRate(0.98);
+    boost->setMaxDepth(2);
     boost->setUseSurrogates(false);
     boost->setCVFolds(0);
 	boost->train(trainingData, cv::ml::ROW_SAMPLE, responses); // 'prepare_train_data' returns an instance of ml::TrainData class

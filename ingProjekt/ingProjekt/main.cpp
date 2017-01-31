@@ -287,8 +287,8 @@ int main(int argc, char* argv[])
     //parser.parseNegatives();
     //parser.parsePositives();
 	Evaluator eval;
-	//eval.trainint(false,"HaarXML.xml",sampleFolders);
-	//eval.detect(false, "HaarXML.xml",sampleFolders);
-	eval.detectMultiScale(false, "HaarXML.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001873.png");
+	//eval.trainint(false,"HaarXML1.xml",sampleFolders);
+	eval.detect(false, "HaarXML1.xml",sampleFolders);
+	//eval.detectMultiScale(false, "HaarXML.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001873.png");
     return 0;
 }
