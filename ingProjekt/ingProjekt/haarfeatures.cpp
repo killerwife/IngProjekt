@@ -134,9 +134,9 @@ void CvHaarEvaluator::generateFeatures()
 {
     int mode = ((const CvHaarFeatureParams*)((CvFeatureParams*)featureParams))->mode;
     int offset = winSize.width + 1;
-    for( int x = 0; x < winSize.width; x+=16 )
+    for( int x = 0; x < winSize.width; x+=8 )
     {
-        for( int y = 0; y < winSize.height; y+=16 )
+        for( int y = 0; y < winSize.height; y+=8 )
         {
             for( int dx = 1; dx <= winSize.width; dx+=16 )
             {
