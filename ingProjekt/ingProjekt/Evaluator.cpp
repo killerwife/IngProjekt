@@ -47,10 +47,10 @@ void Evaluator::fillData(std::vector<cv::Mat>& data, cv::Mat& responses, bool ba
 {
     Parser parser;
     responses = cv::Mat(0, 0, CV_32S);
-    int arrayPos[1] = { 0 };
+    int arrayPos[1] = { 1 };
     cv::Mat pos(1, 1, CV_32S, arrayPos);
     parser.toMat(data, responses, sampleFolders[0], countPos, pos);
-    int arrayNeg[1] = { 1 };
+    int arrayNeg[1] = { 0 };
     cv::Mat neg(1, 1, CV_32S, arrayNeg);
     parser.toMat(data, responses, sampleFolders[1], countNeg, neg);
     if (backfitting)
@@ -121,19 +121,28 @@ void Evaluator::trainint(bool backfitting, std::string xml, std::string sampleFo
 {
     std::vector<cv::Mat> data;
     cv::Mat responses;
-    fillData(data, responses, backfitting, 1000, 2000, sampleFolders, 200);
+    fillData(data, responses, backfitting, 500, 1000, sampleFolders, 200);
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
 	HaarTransform transform(data.size(),data[0].size());
 	transform.SetImages(data, responses);
 	cv::Mat trainingData;
 	transform.GetFeatures(trainingData);
+	long *dataz = (long*)responses.data;
+	for (int i = 0; i < 1500; i++)
+	{
+		printf("%d:%d\t", i, dataz[i]);
+	}
+	cv::imshow("bla",data[0]);
+	cv::waitKey(0);
+	cv::imshow("bla", data[1400]);
+	cv::waitKey(0);
     //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
     //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
     //fs1 << "yourMat" << *data;
     //cv::FileStorage fs2("responses.yml", cv::FileStorage::WRITE);
     //fs2 << "yourMat" << *responses;
-    boost->setBoostType(cv::ml::Boost::DISCRETE);
-    boost->setWeakCount(100);
+    boost->setBoostType(cv::ml::Boost::REAL);
+    boost->setWeakCount(4);
     boost->setWeightTrimRate(0.98);
     boost->setMaxDepth(2);
     boost->setUseSurrogates(false);
@@ -147,7 +156,7 @@ void Evaluator::detect(bool backfitting, std::string filename, std::string sampl
     Parser parser;
 	std::vector<cv::Mat> data;
     cv::Mat responses;
-    fillData(data, responses, backfitting, 40000, 40000, sampleFolders, 40000);
+    fillData(data, responses, backfitting, 10000, 30000, sampleFolders, 1000);
     cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
 	HaarTransform transform(data.size(), data[0].size());
 	transform.SetImages(data, responses);
@@ -156,19 +165,38 @@ void Evaluator::detect(bool backfitting, std::string filename, std::string sampl
     std::vector< cv::Rect > faces;
     cv::Mat result;
 	boost->predict(trainingData, result);
-    float *dataz = (float*)result.data;
-    long *resultz = (long*)responses.data;
+    float *resultz = (float*)result.data;
     //for (int i = 0; i < data->rows; i++)
     //{
     //	printf("Poradove cislo:%d Vysledok:%f Spravny Vysledok: %u\n", i, dataz[i], resultz[i]);
     //}
-    int spravne = 0, nespravne = 0;
+	//printf("%d\n",data.size());
+	long *dataz = (long*)responses.data;
+	//for (int i = 0; i < 200; i++)
+	//{
+	//	printf("%d:%d\t",i,dataz[i]);
+	//}
+	int positives, negatives, falsepositives, falsenegatives;
+	positives = negatives = falsepositives = falsenegatives = 0;
     for (int i = 0; i < data.size(); i++)
     {
-        if (dataz[i] == resultz[i]) spravne++;
-        else nespravne++;
+		if (dataz[i] == 1)
+		{
+			if (dataz[i] == resultz[i])
+				positives++;
+			else
+				falsenegatives++;
+		}
+		else
+		{
+			if (dataz[i] == resultz[i])
+				negatives++;
+			else
+				falsenegatives++;
+		}
     }
-    printf("Spravnych vysledkov:%d Nespravnych:%d\n", spravne, nespravne);
+    printf("Positives vysledkov:%d False positives:%d\n", positives, falsepositives);
+	printf("Negatives vysledkov:%d False negatives:%d\n", negatives, falsenegatives);
 }
 
 /*

@@ -264,7 +264,7 @@ int main(int argc, char* argv[])
     trainint(true, "trainedBoost.xml");
     thread1.join();*/
     std::string sampleFolders[3];
-    sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
+    //sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\";
     sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
     sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
     //trainint(true, "trainedBoostFinal3.xml",sampleFolders);
@@ -272,12 +272,11 @@ int main(int argc, char* argv[])
     /*std::thread thread1 = std::thread(detectMultiScale, false, "trainedBoost.xml", "outputBackfit.png");
     detectMultiScale(false, "trainedBoostNoBackfit.xml", "outputNoBackfit.png");
     thread1.join();*/
-    /*
-    std::string sampleFolders[3];
+    
     sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Testing\\hrac\\RealData\\";
-    sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
-    sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
-    */
+    //sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+    //sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
+    
     //rectOnly("SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002000.png");
     //detectMultiScale(true, "trainedBoostFinal2.xml", "outputFinal2.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001975.png");
     //detectMultiScale(false, "trainedBoostFinal0.xml", "outputFinalNotBackfitted1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002000.png");
@@ -287,8 +286,8 @@ int main(int argc, char* argv[])
     //parser.parseNegatives();
     //parser.parsePositives();
 	Evaluator eval;
-	//eval.trainint(false,"HaarXML1.xml",sampleFolders);
-	eval.detect(false, "HaarXML1.xml",sampleFolders);
+	//eval.trainint(false,"HaarXMLFix.xml",sampleFolders);
+	eval.detect(false, "HaarXMLFix.xml",sampleFolders);
 	//eval.detectMultiScale(false, "HaarXML.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001873.png");
     return 0;
 }

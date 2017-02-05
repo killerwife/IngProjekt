@@ -71,7 +71,9 @@ void Parser::toMat(cv::Mat& output, cv::Mat& responses, std::string location, in
             stemp = data.cFileName;
             std::string tempPosition = std::string(stemp.begin(), stemp.end());
             //std::cout << temp << "\n";
-            image = cv::imread(location + tempPosition, CV_LOAD_IMAGE_GRAYSCALE);
+            image = cv::imread((location + tempPosition).data(), CV_LOAD_IMAGE_GRAYSCALE);
+			cv::imshow("bla",image);
+			cv::waitKey(0);
             if (image.isContinuous())
             {
                 image.convertTo(image, CV_32F);
@@ -105,11 +107,15 @@ void Parser::toMat(std::vector<cv::Mat>& output, cv::Mat& responses, std::string
             image = cv::imread(location + tempPosition, CV_LOAD_IMAGE_GRAYSCALE);
             if (image.isContinuous())
             {
-                image.convertTo(image, CV_32F);
+				//cv::imshow("bla", image);
+				//cv::waitKey(0);
+                //image.convertTo(image, CV_32F);
                 output.push_back(image);
                 responses.push_back(response);
+				//printf("%s\n", (location + tempPosition).data());
+				//wprintf(L"%s\n", stemp.data());
+				i++;
             }
-            i++;
             if (count <= i)
                 break;
         } while (FindNextFile(hFind, &data));
