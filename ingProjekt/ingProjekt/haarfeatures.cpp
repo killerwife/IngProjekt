@@ -138,9 +138,9 @@ void CvHaarEvaluator::generateFeatures()
     {
         for( int y = 0; y < winSize.height; y+=8 )
         {
-            for( int dx = 1; dx <= winSize.width; dx+=16 )
+            for( int dx = 1; dx <= winSize.width; dx+=8 )
             {
-                for( int dy = 1; dy <= winSize.height; dy+=16 )
+                for( int dy = 1; dy <= winSize.height; dy+=8 )
                 {
                     // haar_x2
                     if ( (x+dx*2 <= winSize.width) && (y+dy <= winSize.height) )

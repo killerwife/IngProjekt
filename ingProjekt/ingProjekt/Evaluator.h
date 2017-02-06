@@ -29,5 +29,6 @@ public:
     void trainint(bool backfitting, std::string xml, std::string sampleFolders[3]);
 	void detect(bool backfitting, std::string filename, std::string sampleFolders[3]);
 	void detectMultiScale(bool exportShit, std::string xml, std::string filename, std::string imageName);
+    void detectMultiScaleProto(bool exportShit, std::string xml, std::string filename, std::string imageName);
 };
 

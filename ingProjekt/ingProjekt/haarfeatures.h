@@ -6,6 +6,7 @@
 #define CV_HAAR_FEATURE_MAX      3
 
 #define HFP_NAME "haarFeatureParams"
+
 class CvHaarFeatureParams : public CvFeatureParams
 {
 public:
@@ -37,7 +38,7 @@ public:
     virtual float operator()(int featureIdx, int sampleIdx) const;
     virtual void writeFeatures( cv::FileStorage &fs, const cv::Mat& featureMap ) const;
     void writeFeature( cv::FileStorage &fs, int fi ) const; // for old file fornat
-protected:
+
     virtual void generateFeatures();
 
     class Feature
@@ -63,6 +64,7 @@ protected:
             int p0, p1, p2, p3;
         } fastRect[CV_HAAR_FEATURE_MAX];
     };
+protected:
 
     std::vector<Feature> features;
     cv::Mat  sum;         /* sum images (each row represents image) */

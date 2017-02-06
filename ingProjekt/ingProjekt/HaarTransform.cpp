@@ -1,11 +1,16 @@
 #include "HaarTransform.h"
+#include "opencv2/imgproc.hpp"
 
 
-HaarTransform::HaarTransform(int maxSampleCount, cv::Size winsize) : m_sampleCount(maxSampleCount), m_counter(0)
+HaarTransform::HaarTransform(int maxSampleCount, cv::Size m_winSize) : m_sampleCount(maxSampleCount), m_counter(0)
 {
-	m_eval.init(CvFeatureParams::create(0), maxSampleCount, winsize);
+	m_eval.init(CvFeatureParams::create(0), maxSampleCount, m_winSize);
 }
 
+HaarTransform::HaarTransform(HaarFeatureParameters mode, cv::Size winSize) : m_mode(mode), m_winSize(winSize)
+{
+
+}
 
 HaarTransform::~HaarTransform()
 {
@@ -37,4 +42,222 @@ void HaarTransform::GetFeatures(cv::Mat& resultSet)
 		tempMat = tempMat.reshape(1, 1);
 		resultSet.push_back(tempMat);
 	}
+}
+
+void HaarTransform::SetImageBig(cv::Mat& image)
+{
+    m_image = image;
+    int x = m_image.cols, y = m_image.rows;
+    int count = 0;
+    for (double scaleFactor = 1;;scaleFactor*=1.1,count++)
+    {
+        cv::Mat tempImage;
+        cv::Size tempSize(std::round(x*(1. / scaleFactor)), std::round(y*(1. / scaleFactor)));
+        if (m_winSize.height > tempSize.height || m_winSize.width > tempSize.width)
+            break;
+        cv::resize(m_image,tempImage,tempSize);
+        m_sum.push_back(cv::Mat(0,0, m_image.type()));
+        m_integral.push_back(cv::Mat(0, 0, m_image.type()));
+        if (m_mode == HaarFeatureParameters::ALL)
+        {
+            m_tiltedIntegral.push_back(cv::Mat(tempSize.height + 1, tempSize.width + 1, m_image.type()));
+            cv::integral(tempImage, m_sum[count], m_integral[count], m_tiltedIntegral[count]);
+        }
+        else
+            cv::integral(tempImage, m_sum[count], m_integral[count]);
+
+        generateFeatures(count,tempSize.width+1);
+    }
+}
+
+void HaarTransform::CalculateFeatureVector(cv::Mat& features, int scale, int x, int y)
+{
+    for (int i = 0; i < m_features.size(); i++)
+    {
+        features.push_back(m_features[scale][i].calc(m_integral[scale], m_tiltedIntegral[scale], i, x, y));
+    }
+}
+
+void HaarTransform::generateFeatures(int scale, int offset)
+{
+    m_features.push_back(std::vector<Feature>());
+    for (int x = 0; x < m_winSize.width; x += 8)
+    {
+        for (int y = 0; y < m_winSize.height; y += 8)
+        {
+            for (int dx = 1; dx <= m_winSize.width; dx += 16)
+            {
+                for (int dy = 1; dy <= m_winSize.height; dy += 16)
+                {
+                    // haar_x2
+                    if ((x + dx * 2 <= m_winSize.width) && (y + dy <= m_winSize.height))
+                    {
+                        m_features[scale].push_back(Feature(offset, false,
+                            x, y, dx * 2, dy, -1,
+                            x + dx, y, dx, dy, +2));
+                    }
+                    // haar_y2
+                    if ((x + dx <= m_winSize.width) && (y + dy * 2 <= m_winSize.height))
+                    {
+                        m_features[scale].push_back(Feature(offset, false,
+                            x, y, dx, dy * 2, -1,
+                            x, y + dy, dx, dy, +2));
+                    }
+                    // haar_x3
+                    if ((x + dx * 3 <= m_winSize.width) && (y + dy <= m_winSize.height))
+                    {
+                        m_features[scale].push_back(Feature(offset, false,
+                            x, y, dx * 3, dy, -1,
+                            x + dx, y, dx, dy, +3));
+                    }
+                    // haar_y3
+                    if ((x + dx <= m_winSize.width) && (y + dy * 3 <= m_winSize.height))
+                    {
+                        m_features[scale].push_back(Feature(offset, false,
+                            x, y, dx, dy * 3, -1,
+                            x, y + dy, dx, dy, +3));
+                    }
+                    if (m_mode != CvHaarFeatureParams::BASIC)
+                    {
+                        // haar_x4
+                        if ((x + dx * 4 <= m_winSize.width) && (y + dy <= m_winSize.height))
+                        {
+                            m_features[scale].push_back(Feature(offset, false,
+                                x, y, dx * 4, dy, -1,
+                                x + dx, y, dx * 2, dy, +2));
+                        }
+                        // haar_y4
+                        if ((x + dx <= m_winSize.width) && (y + dy * 4 <= m_winSize.height))
+                        {
+                            m_features[scale].push_back(Feature(offset, false,
+                                x, y, dx, dy * 4, -1,
+                                x, y + dy, dx, dy * 2, +2));
+                        }
+                    }
+                    // x2_y2
+                    if ((x + dx * 2 <= m_winSize.width) && (y + dy * 2 <= m_winSize.height))
+                    {
+                        m_features[scale].push_back(Feature(offset, false,
+                            x, y, dx * 2, dy * 2, -1,
+                            x, y, dx, dy, +2,
+                            x + dx, y + dy, dx, dy, +2));
+                    }
+                    if (m_mode != CvHaarFeatureParams::BASIC)
+                    {
+                        if ((x + dx * 3 <= m_winSize.width) && (y + dy * 3 <= m_winSize.height))
+                        {
+                            m_features[scale].push_back(Feature(offset, false,
+                                x, y, dx * 3, dy * 3, -1,
+                                x + dx, y + dy, dx, dy, +9));
+                        }
+                    }
+                    if (m_mode == CvHaarFeatureParams::ALL)
+                    {
+                        // tilted haar_x2
+                        if ((x + 2 * dx <= m_winSize.width) && (y + 2 * dx + dy <= m_winSize.height) && (x - dy >= 0))
+                        {
+                            m_features[scale].push_back(Feature(offset, true,
+                                x, y, dx * 2, dy, -1,
+                                x, y, dx, dy, +2));
+                        }
+                        // tilted haar_y2
+                        if ((x + dx <= m_winSize.width) && (y + dx + 2 * dy <= m_winSize.height) && (x - 2 * dy >= 0))
+                        {
+                            m_features[scale].push_back(Feature(offset, true,
+                                x, y, dx, 2 * dy, -1,
+                                x, y, dx, dy, +2));
+                        }
+                        // tilted haar_x3
+                        if ((x + 3 * dx <= m_winSize.width) && (y + 3 * dx + dy <= m_winSize.height) && (x - dy >= 0))
+                        {
+                            m_features[scale].push_back(Feature(offset, true,
+                                x, y, dx * 3, dy, -1,
+                                x + dx, y + dx, dx, dy, +3));
+                        }
+                        // tilted haar_y3
+                        if ((x + dx <= m_winSize.width) && (y + dx + 3 * dy <= m_winSize.height) && (x - 3 * dy >= 0))
+                        {
+                            m_features[scale].push_back(Feature(offset, true,
+                                x, y, dx, 3 * dy, -1,
+                                x - dy, y + dy, dx, dy, +3));
+                        }
+                        // tilted haar_x4
+                        if ((x + 4 * dx <= m_winSize.width) && (y + 4 * dx + dy <= m_winSize.height) && (x - dy >= 0))
+                        {
+                            m_features[scale].push_back(Feature(offset, true,
+                                x, y, dx * 4, dy, -1,
+                                x + dx, y + dx, dx * 2, dy, +2));
+                        }
+                        // tilted haar_y4
+                        if ((x + dx <= m_winSize.width) && (y + dx + 4 * dy <= m_winSize.height) && (x - 4 * dy >= 0))
+                        {
+                            m_features[scale].push_back(Feature(offset, true,
+                                x, y, dx, 4 * dy, -1,
+                                x - dy, y + dy, dx, 2 * dy, +2));
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+float Feature::calc(const cv::Mat &_sum, const cv::Mat &_tilted, size_t y, size_t offsetX, size_t offsetY) const
+{
+    const int* img = (m_tilted ? _tilted.ptr<int>((int)y) : _sum.ptr<int>((int)y));
+    size_t combinedOffset = offsetX + m_offset*offsetY;
+    float ret = rect[0].weight * (img[fastRect[0].p0 + combinedOffset] - img[fastRect[0].p1 + combinedOffset] - img[fastRect[0].p2 + combinedOffset] + img[fastRect[0].p3 + combinedOffset]) +
+        rect[1].weight * (img[fastRect[1].p0 + combinedOffset] - img[fastRect[1].p1 + combinedOffset] - img[fastRect[1].p2 + combinedOffset] + img[fastRect[1].p3 + combinedOffset]);
+    if (rect[2].weight != 0.0f)
+        ret += rect[2].weight * (img[fastRect[2].p0 + combinedOffset] - img[fastRect[2].p1 + combinedOffset] - img[fastRect[2].p2 + combinedOffset] + img[fastRect[2].p3 + combinedOffset]);
+    return ret;
+}
+
+Feature::Feature() : m_tilted(false)
+{
+    rect[0].r = rect[1].r = rect[2].r = cv::Rect(0, 0, 0, 0);
+    rect[0].weight = rect[1].weight = rect[2].weight = 0;
+}
+
+Feature::Feature(int offset, bool _tilted,
+    int x0, int y0, int w0, int h0, float wt0,
+    int x1, int y1, int w1, int h1, float wt1,
+    int x2, int y2, int w2, int h2, float wt2) : m_offset(offset), m_tilted(_tilted)
+{
+    rect[0].r.x = x0;
+    rect[0].r.y = y0;
+    rect[0].r.width = w0;
+    rect[0].r.height = h0;
+    rect[0].weight = wt0;
+
+    rect[1].r.x = x1;
+    rect[1].r.y = y1;
+    rect[1].r.width = w1;
+    rect[1].r.height = h1;
+    rect[1].weight = wt1;
+
+    rect[2].r.x = x2;
+    rect[2].r.y = y2;
+    rect[2].r.width = w2;
+    rect[2].r.height = h2;
+    rect[2].weight = wt2;
+
+    if (!m_tilted)
+    {
+        for (int j = 0; j < CV_HAAR_FEATURE_MAX; j++)
+        {
+            if (rect[j].weight == 0.0F)
+                break;
+            CV_SUM_OFFSETS(fastRect[j].p0, fastRect[j].p1, fastRect[j].p2, fastRect[j].p3, rect[j].r, m_offset)
+        }
+    }
+    else
+    {
+        for (int j = 0; j < CV_HAAR_FEATURE_MAX; j++)
+        {
+            if (rect[j].weight == 0.0F)
+                break;
+            CV_TILTED_OFFSETS(fastRect[j].p0, fastRect[j].p1, fastRect[j].p2, fastRect[j].p3, rect[j].r, m_offset)
+        }
+    }
 }

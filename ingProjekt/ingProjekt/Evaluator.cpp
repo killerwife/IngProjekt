@@ -122,20 +122,23 @@ void Evaluator::trainint(bool backfitting, std::string xml, std::string sampleFo
     std::vector<cv::Mat> data;
     cv::Mat responses;
     fillData(data, responses, backfitting, 500, 1000, sampleFolders, 200);
+    for (auto &mat : data)
+        cv::resize(mat,mat,cv::Size(24,40));
+
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
 	HaarTransform transform(data.size(),data[0].size());
 	transform.SetImages(data, responses);
 	cv::Mat trainingData;
 	transform.GetFeatures(trainingData);
 	long *dataz = (long*)responses.data;
-	for (int i = 0; i < 1500; i++)
-	{
-		printf("%d:%d\t", i, dataz[i]);
-	}
-	cv::imshow("bla",data[0]);
-	cv::waitKey(0);
-	cv::imshow("bla", data[1400]);
-	cv::waitKey(0);
+	//for (int i = 0; i < 1500; i++)
+	//{
+	//	printf("%d:%d\t", i, dataz[i]);
+	//}
+	//cv::imshow("bla",data[0]);
+	//cv::waitKey(0);
+	//cv::imshow("bla", data[1400]);
+	//cv::waitKey(0);
     //cv::Ptr<cv::ml::TrainData> trainData = prepare_train_data(*data,*responses,40);
     //cv::FileStorage fs1("data.yml", cv::FileStorage::WRITE);
     //fs1 << "yourMat" << *data;
@@ -235,7 +238,7 @@ void Evaluator::detectMultiScale(bool exportShit, std::string xml, std::string f
 				cv::Mat response;
 				boost->predict(trainingData, response);
 				long* responses = (long*)response.data;
-				if (responses[0] == 0)
+				if (responses[0] == 1)
 				{
 					//rectangle(result, rectangleZone, (0, 0, 255), 2);
 					boundingBoxes.push_back(rectangleZone);
@@ -258,4 +261,52 @@ void Evaluator::detectMultiScale(bool exportShit, std::string xml, std::string f
 	cv::imwrite(filename, result);
 	cv::waitKey(0);
 	//fclose(file);
+}
+
+void Evaluator::detectMultiScaleProto(bool exportShit, std::string xml, std::string filename, std::string imageName)
+{
+    cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(xml);
+    cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
+    //cv::Mat img = cv::imread("C:\\GitHubCode\\IngProjekt\\ingProjekt\\ingProjekt\\" + imageName);
+    cv::Mat result = img.clone();
+    std::vector<cv::Rect> boundingBoxes;
+    cv::Size scanningWindow(24, 40);
+    HaarTransform transform(HaarFeatureParameters::ALL, scanningWindow);
+    transform.SetImageBig(img);
+    std::vector< cv::Rect > faces;
+    //FILE * file = fopen("rects.txt", "w");
+    int shift = 4;
+    int m = 32000;
+    int scaleCount = 0;
+    for (double scaleFactor = 1;; scaleFactor *= 1.1,scaleCount++)
+    {
+        printf("%lf\n", scaleFactor);
+        cv::Size tempSize(std::round(img.cols*(1. / scaleFactor)), std::round(img.rows*(1. / scaleFactor)));
+        if (scanningWindow.height > tempSize.height || scanningWindow.width > tempSize.width)
+            break;
+
+        cv::Size bounds(tempSize.width - scanningWindow.width, tempSize.height - scanningWindow.height);
+        for (int i = 0; i < bounds.width; i += 2)
+        {
+            for (int k = 0; k < bounds.height; k += 2)
+            {
+                cv::Mat features(0, 0, CV_32S);
+                cv::Rect rectangleZone(std::round(i*scaleFactor),std::round(k*scaleFactor),std::round(scanningWindow.width*scaleFactor),std::round(scanningWindow.height*scaleFactor));
+                transform.CalculateFeatureVector(features,scaleCount,i,k);
+                cv::Mat response;
+                boost->predict(features, response);
+                long* responses = (long*)response.data;
+                if (responses[0] == 1)
+                    boundingBoxes.push_back(rectangleZone);
+            }
+        }
+    }
+    //auto resultBoundingBoxes = nonMaxSuppression(boundingBoxes, 0.3f, 4);
+    for (cv::Rect& box : boundingBoxes)
+    {
+        rectangle(result, box, (0, 0, 255), 2);
+    }
+    cv::imwrite(filename, result);
+    cv::waitKey(0);
+    //fclose(file);
 }
