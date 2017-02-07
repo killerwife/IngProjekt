@@ -1,0 +1,11 @@
+#multiboost.exe --configfile ./cv13/trenovanie/configGrayscale.txt
+fileformat arff
+timelimit 30
+traintest ./cv13/PictureGrayscale/trainGrayScale.arff ./cv13/PictureGrayscale/testGrayScale.arff 100000
+learnertype TreeLearner
+baselearnertype HaarSingleStumpLearner 10
+csample num 20
+iisize 96x160
+outputinfo ./cv13/trenovanie/resultsGrayScale.dta
+constant
+seed 73
