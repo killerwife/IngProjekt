@@ -1,4 +1,5 @@
 #include "Evaluator.h"
+#include <ctime>
 
 void detection()
 {
@@ -264,9 +265,9 @@ int main(int argc, char* argv[])
     trainint(true, "trainedBoost.xml");
     thread1.join();*/
     std::string sampleFolders[3];
-    sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\";
-    sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
-    sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
+    //sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\";
+    //sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+    //sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
     //trainint(true, "trainedBoostFinal3.xml",sampleFolders);
     //detect(true);
     /*std::thread thread1 = std::thread(detectMultiScale, false, "trainedBoost.xml", "outputBackfit.png");
@@ -285,9 +286,19 @@ int main(int argc, char* argv[])
     //Parser parser;
     //parser.parseNegatives();
     //parser.parsePositives();
+
+    sampleFolders[0] = "D:\\Nenapadny priecinok\\neg\\";
+    sampleFolders[1] = "D:\\Nenapadny priecinok\\pos\\";
+    /*sampleFolders[0] = "D:\\Nenapadny priecinok\\testData\\neg\\";
+    sampleFolders[1] = "D:\\Nenapadny priecinok\\testData\\pos\\";*/
+    sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
+    clock_t begin = clock();
 	Evaluator eval;
-	//eval.trainint(false,"HaarXML2640.xml",sampleFolders);
-	//eval.detect(false, "HaarXMLFix.xml",sampleFolders);
-	eval.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001873.png");
+	eval.trainint(false,"HaarXMLPrezentacia.xml",sampleFolders);
+	//eval.detect(false, "HaarXMLPrezentacia.xml",sampleFolders);
+	//eval.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001873.png");
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    printf("Seconds %lf\n", elapsed_secs);
     return 0;
 }

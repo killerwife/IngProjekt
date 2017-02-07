@@ -121,9 +121,11 @@ void Evaluator::trainint(bool backfitting, std::string xml, std::string sampleFo
 {
     std::vector<cv::Mat> data;
     cv::Mat responses;
-    fillData(data, responses, backfitting, 500, 1000, sampleFolders, 200);
-    for (auto &mat : data)
-        cv::resize(mat,mat,cv::Size(24,40));
+    fillData(data, responses, backfitting, 500, 2000, sampleFolders, 200);
+    //for (auto &mat : data)
+    //{
+    //    cv::resize(mat, mat, cv::Size(24, 40));
+    //}
 
     cv::Ptr<cv::ml::Boost> boost = cv::ml::Boost::create();
 	HaarTransform transform(data.size(),data[0].size());
@@ -145,9 +147,9 @@ void Evaluator::trainint(bool backfitting, std::string xml, std::string sampleFo
     //cv::FileStorage fs2("responses.yml", cv::FileStorage::WRITE);
     //fs2 << "yourMat" << *responses;
     boost->setBoostType(cv::ml::Boost::REAL);
-    boost->setWeakCount(4);
+    boost->setWeakCount(4142);
     boost->setWeightTrimRate(0.98);
-    boost->setMaxDepth(2);
+    boost->setMaxDepth(1);
     boost->setUseSurrogates(false);
     boost->setCVFolds(0);
 	boost->train(trainingData, cv::ml::ROW_SAMPLE, responses); // 'prepare_train_data' returns an instance of ml::TrainData class
@@ -159,7 +161,11 @@ void Evaluator::detect(bool backfitting, std::string filename, std::string sampl
     Parser parser;
 	std::vector<cv::Mat> data;
     cv::Mat responses;
-    fillData(data, responses, backfitting, 10000, 30000, sampleFolders, 1000);
+    fillData(data, responses, backfitting, 2000, 4000, sampleFolders, 1000);
+    //for (auto &mat : data)
+    //{
+    //    cv::resize(mat, mat, cv::Size(24, 40));
+    //}
     cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(filename);
 	HaarTransform transform(data.size(), data[0].size());
 	transform.SetImages(data, responses);
@@ -278,6 +284,7 @@ void Evaluator::detectMultiScaleProto(bool exportShit, std::string xml, std::str
     int shift = 4;
     int m = 32000;
     int scaleCount = 0;
+    cv::Mat features(1, transform.GetFeatureCount(), CV_32F);
     for (double scaleFactor = 1;; scaleFactor *= 1.1,scaleCount++)
     {
         printf("%lf\n", scaleFactor);
@@ -289,8 +296,7 @@ void Evaluator::detectMultiScaleProto(bool exportShit, std::string xml, std::str
         for (int i = 0; i < bounds.width; i += 2)
         {
             for (int k = 0; k < bounds.height; k += 2)
-            {
-                cv::Mat features(0, 0, CV_32S);
+            {                
                 cv::Rect rectangleZone(std::round(i*scaleFactor),std::round(k*scaleFactor),std::round(scanningWindow.width*scaleFactor),std::round(scanningWindow.height*scaleFactor));
                 transform.CalculateFeatureVector(features,scaleCount,i,k);
                 cv::Mat response;

@@ -42,6 +42,7 @@ public:
     void SetImageBig(cv::Mat& image);
     void CalculateFeatureVector(cv::Mat& features, int scale, int x, int y);
     void generateFeatures(int scale, int offset);
+    size_t GetFeatureCount() { return m_features[0].size(); }
 private:
 	CvHaarEvaluator m_eval;
     int m_sampleCount;
