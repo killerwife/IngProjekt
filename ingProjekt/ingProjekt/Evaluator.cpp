@@ -147,7 +147,7 @@ void Evaluator::trainint(bool backfitting, std::string xml, std::string sampleFo
     //cv::FileStorage fs2("responses.yml", cv::FileStorage::WRITE);
     //fs2 << "yourMat" << *responses;
     boost->setBoostType(cv::ml::Boost::REAL);
-    boost->setWeakCount(4142);
+    boost->setWeakCount(100);
     boost->setWeightTrimRate(0.98);
     boost->setMaxDepth(1);
     boost->setUseSurrogates(false);

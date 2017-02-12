@@ -1,7 +1,7 @@
 #include "Evaluator.h"
 #include <ctime>
 
-void detection()
+void detection(std::string model, std::string file)
 {
     //for time measure  
     double TakeTime;
@@ -11,12 +11,12 @@ void detection()
     cv::namedWindow("origin");
 
     //load image  
-    cv::Mat img = cv::imread("SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001812.png");
+    cv::Mat img = cv::imread(file);
     cv::Mat grayImg; //adaboost detection is gray input only.  
     cvtColor(img, grayImg, CV_BGR2GRAY);
 
     //load xml file  
-    std::string trainface = "trainedBoost.xml";
+    std::string trainface = model;
 
     //declaration  
     cv::CascadeClassifier ada_cpu;
@@ -259,15 +259,63 @@ void rectOnly(std::string imageName)
 ocasovat cpu boost a gpu boost, trening a detekcia niekolkych obrazkov
 */
 
+void commands(int defaultCommand = -1)
+{
+    if (!(defaultCommand == -1))
+        scanf("%d", &defaultCommand);
+
+    while (defaultCommand)
+    {
+        printf("Vyberte moznost:\n");
+        printf("0: Koniec.\n");
+        printf("1: Test obrazku na natrenovanom modeli pre detekciu tvari.\n");
+        printf("2: Test obrazku na natrenovanom modeli pre detekciu tiel.\n");
+        printf("3: Trening modelu na pribalenych datach.\n");
+        printf("4: Benchmark natrenovaneho modelu.\n");
+        scanf("%d", &defaultCommand);
+        switch (defaultCommand)
+        {
+        case 1:
+            detection("haarcascade_frontalface_alt.xml","happypeople.jpg");
+            break;
+        case 2:
+            detection("haarcascade_fullbody.xml", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
+            break;
+        case 3:
+        {
+            std::string sampleFolders[3];
+            sampleFolders[0] = "trenovacieData\\pos\\";
+            sampleFolders[1] = "trenovacieData\\neg\\";
+            sampleFolders[2] = "backfitting\\";
+            Evaluator eval;
+            eval.trainint(false,"HaarXMLSemestralnaPraca.xml",sampleFolders);
+            break;
+        }
+        case 4:
+        {
+            std::string sampleFolders[3];
+            sampleFolders[0] = "testovacieData\\pos\\";
+            sampleFolders[1] = "testovacieData\\neg\\";
+            sampleFolders[2] = "backfitting\\";
+            Evaluator eval;
+            eval.detect(false, "HaarXMLSemestralnaPraca.xml",sampleFolders);
+            break;
+        }
+        case 0:
+            break;
+        }
+    }
+}
+
 int main(int argc, char* argv[])
 {
     /*std::thread thread1 = std::thread(trainint, false, "trainedBoostNoBackfit.xml");
     trainint(true, "trainedBoost.xml");
     thread1.join();*/
-    std::string sampleFolders[3];
-    sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\";
-    sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
-    sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
+    //std::string sampleFolders[3];
+    //sampleFolders[0] = "C:\\GitHubCode\\anotovanie\\BoundingBoxes\\Training\\hrac\\RealData\\";
+    //sampleFolders[1] = "C:\\GitHubCode\\anotovanie\\TrainingData\\";
+    //sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
     //trainint(true, "trainedBoostFinal3.xml",sampleFolders);
     //detect(true);
     /*std::thread thread1 = std::thread(detectMultiScale, false, "trainedBoost.xml", "outputBackfit.png");
@@ -292,13 +340,14 @@ int main(int argc, char* argv[])
     /*sampleFolders[0] = "D:\\Nenapadny priecinok\\testData\\neg\\";
     sampleFolders[1] = "D:\\Nenapadny priecinok\\testData\\pos\\";*/
     //sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
-    clock_t begin = clock();
-	Evaluator eval;
+ //   clock_t begin = clock();
+	//Evaluator eval;
 	//eval.trainint(false,"HaarXMLPrezentacia.xml",sampleFolders);
 	//eval.detect(false, "HaarXMLPrezentacia.xml",sampleFolders);
-	eval.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_001873.png");
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    printf("Seconds %lf\n", elapsed_secs);
+	//.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
+    //clock_t end = clock();
+    //double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    //printf("Seconds %lf\n", elapsed_secs);
+    commands();
     return 0;
 }
