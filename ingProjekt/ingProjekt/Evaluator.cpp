@@ -217,27 +217,27 @@ imageName is the image upon which we want to launch the detection algorithm
 void Evaluator::detectMultiScale(bool exportShit, std::string xml, std::string filename, std::string imageName)
 {
 	cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(xml);
-	cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
+	cv::Mat img = cv::imread(imageName,CV_LOAD_IMAGE_GRAYSCALE);
 	//cv::Mat img = cv::imread("C:\\GitHubCode\\IngProjekt\\ingProjekt\\ingProjekt\\" + imageName);
 	cv::Mat result = img.clone();
 	std::vector<cv::Rect> boundingBoxes;
-	HaarTransform transform(1000,cv::Size(96,160));
+	HaarTransform transform(1,cv::Size(96,160));
 	std::vector< cv::Rect > faces;
 	//FILE * file = fopen("rects.txt", "w");
 	int shift = 4;
 	int m = 32000;
-	for (int scale = 8; scale <= 512; scale += 4, shift += 4)
+	for (int scale = 32; scale <= 512; scale += 4, shift += 4)
 	{
 		printf("%d\n", scale);
-		for (int i = 0; i + scale * 3 < img.cols; i += shift)
+		for (int i = 0; i + scale * 3 <= img.cols; i += shift)
 		{
-			for (int k = 0; k + scale * 5 < img.rows; k += shift)
+			for (int k = 0; k + scale * 5 <= img.rows; k += shift)
 			{
 				cv::Rect rectangleZone(i, k, scale * 3, scale * 5);
 				cv::Mat imagePart = cv::Mat(img, rectangleZone);
-				cv::resize(imagePart, imagePart, cv::Size(96, 160));
-				imagePart.convertTo(imagePart, CV_32F);
-				cv::Mat imagePartInput = imagePart.reshape(1, 1);
+				//cv::resize(imagePart, imagePart, cv::Size(96, 160));
+				//imagePart.convertTo(imagePart, CV_32F);
+				//cv::Mat imagePartInput = imagePart.reshape(1, 1);
 				transform.SetImage(imagePart, 0);
 				cv::Mat trainingData;
 				transform.GetFeatures(trainingData);
@@ -264,10 +264,41 @@ void Evaluator::detectMultiScale(bool exportShit, std::string xml, std::string f
 	{
 		rectangle(result, box, (0, 0, 255), 2);
 	}
-	cv::imwrite(filename, result);
+	cv::imshow("Image", result);
 	cv::waitKey(0);
 	//fclose(file);
 }
+
+void Evaluator::detectMultiScaleTemp(bool exportShit, std::string xml, std::string filename, std::string imageName)
+{
+	cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(xml);
+	cv::Mat img = cv::imread(imageName, CV_LOAD_IMAGE_GRAYSCALE);
+	//cv::Mat img = cv::imread("C:\\GitHubCode\\IngProjekt\\ingProjekt\\ingProjekt\\" + imageName);
+	cv::Mat resultImage = img.clone();
+	cv::Mat responses;
+	std::vector<cv::Rect> boundingBoxes;
+	HaarTransform transform(1, cv::Size(96, 160));
+	std::vector<cv::Mat> data;
+	data.push_back(img);
+	int arrayNeg[1] = { 1 };
+	cv::Mat neg(1, 1, CV_32S, arrayNeg);
+	responses.push_back(neg);
+	//FILE * file = fopen("rects.txt", "w");
+	//auto resultBoundingBoxes = nonMaxSuppression(boundingBoxes, 0.3f, 4);
+	transform.SetImages(data, responses);
+	cv::Mat trainingData;
+	transform.GetFeatures(trainingData);
+	cv::Mat result;
+	boost->predict(trainingData, result);
+	float *resultz = (float*)result.data;
+	if (resultz[0]==1)
+	rectangle(resultImage, cv::Rect(4,4,80,150), (0, 0, 255), 2);
+	cv::imshow("Image", resultImage);
+	//cv::imshow("Image", img);
+	cv::waitKey(0);
+	//fclose(file);
+}
+
 
 void Evaluator::detectMultiScaleProto(bool exportShit, std::string xml, std::string filename, std::string imageName)
 {
