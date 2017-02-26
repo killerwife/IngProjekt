@@ -8,7 +8,7 @@ void detection(std::string model, std::string file)
 	unsigned long long Atime, Btime;
 
 	//window  
-	cv::namedWindow("origin");
+	//cv::namedWindow("origin");
 
 	//load image  
 	cv::Mat img = cv::imread(file);
@@ -37,10 +37,19 @@ void detection(std::string model, std::string file)
 	//////////////////////////////////////////////  
 	//cpu case face detection code  
 	std::vector< cv::Rect > faces;
-	Atime = cv::getTickCount();
+	//Atime = cv::getTickCount();
+    std::chrono::time_point<std::chrono::system_clock> start, end;
+    start = std::chrono::system_clock::now();
 	ada_cpu.detectMultiScale(grayImg, faces);
-	Btime = cv::getTickCount();
-	TakeTime = (Btime - Atime) / cv::getTickFrequency();
+    end = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    std::cout << "finished computation at " << std::ctime(&end_time)
+        << "elapsed time: " << elapsed_seconds.count() << "s\n";
+	//Btime = cv::getTickCount();
+	//TakeTime = (Btime - Atime) / cv::getTickFrequency();
 	//printf("detected face(cpu version) = %d / %lf sec take.\n", faces.size(), TakeTime);
 	if (faces.size() >= 1)
 	{
@@ -76,8 +85,8 @@ void detection(std::string model, std::string file)
 
 	/////////////////////////////////////////////////  
 	//result display  
-	imshow("origin", img);
-	cv::waitKey(0);
+	//imshow("origin", img);
+	//cv::waitKey(0);
 }
 
 static cv::Ptr<cv::ml::TrainData>
@@ -355,13 +364,25 @@ int main(int argc, char* argv[])
 	sampleFolders[1] = "D:\\Nenapadny priecinok\\testData\\pos\\";*/
 	//sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
 	//   clock_t begin = clock();
-	//Evaluator eval;
+	Evaluator eval;
 	//eval.trainint(false,"HaarXMLPrezentacia.xml",sampleFolders);
 	//eval.detect(false, "HaarXMLPrezentacia.xml",sampleFolders);
-	//.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
+	//eval.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
 	//clock_t end = clock();
 	//double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 	//printf("Seconds %lf\n", elapsed_secs);
-	commands();
+	//commands();
+
+    //std::chrono::time_point<std::chrono::system_clock> start, end;
+    //start = std::chrono::system_clock::now();
+    //eval.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
+    detection("haarcascade_fullbody.xml", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
+    //end = std::chrono::system_clock::now();
+
+    //std::chrono::duration<double> elapsed_seconds = end - start;
+    //std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+
+    //std::cout << "finished computation at " << std::ctime(&end_time)
+    //    << "elapsed time: " << elapsed_seconds.count() << "s\n";
 	return 0;
 }

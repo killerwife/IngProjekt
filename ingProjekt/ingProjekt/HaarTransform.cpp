@@ -65,13 +65,20 @@ void HaarTransform::SetImageBig(cv::Mat& image)
         m_integral.push_back(cv::Mat(0, 0, m_image.type()));
         if (m_mode == HaarFeatureParameters::ALL)
         {
-            m_tiltedIntegral.push_back(cv::Mat(tempSize.height + 1, tempSize.width + 1, m_image.type()));
+            m_tiltedIntegral.push_back(cv::Mat(0, 0, m_image.type()));
             cv::integral(tempImage, m_sum[count], m_integral[count], m_tiltedIntegral[count]);
         }
         else
             cv::integral(tempImage, m_sum[count], m_integral[count]);
 
-        generateFeatures(count,tempSize.width+1);
+        //cv::imshow("bla", tempImage);
+        //cv::waitKey();
+        //cv::imshow("bla", m_integral[count]);
+        //cv::waitKey();
+        //cv::imshow("bla", m_tiltedIntegral[count]);
+        //cv::waitKey();
+
+        generateFeatures(count,tempSize.width);
     }
 }
 
@@ -210,10 +217,20 @@ void HaarTransform::generateFeatures(int scale, int offset)
 
 float Feature::calc(const cv::Mat &_sum, const cv::Mat &_tilted, size_t y, size_t offsetX, size_t offsetY) const
 {
-    const int* img = (m_tilted ? _tilted.ptr<int>((int)y) : _sum.ptr<int>((int)y));
+    const int* img = (m_tilted ? _tilted.ptr<int>() : _sum.ptr<int>());
     size_t combinedOffset = offsetX + m_offset*offsetY;
-    float ret = rect[0].weight * (img[fastRect[0].p0 + combinedOffset] - img[fastRect[0].p1 + combinedOffset] - img[fastRect[0].p2 + combinedOffset] + img[fastRect[0].p3 + combinedOffset]) +
-        rect[1].weight * (img[fastRect[1].p0 + combinedOffset] - img[fastRect[1].p1 + combinedOffset] - img[fastRect[1].p2 + combinedOffset] + img[fastRect[1].p3 + combinedOffset]);
+    float firstFirst = img[fastRect[0].p0 + combinedOffset];
+    float firstSecond = img[fastRect[0].p1 + combinedOffset];
+    float firstThird = img[fastRect[0].p2 + combinedOffset];
+    float firstFourth = img[fastRect[0].p3 + combinedOffset];
+    float firstRect = firstFirst - firstSecond - firstThird + firstFourth;
+    float secondFirst = img[fastRect[1].p0 + combinedOffset];
+    float secondSecond = img[fastRect[1].p1 + combinedOffset];
+    float secondThird = img[fastRect[1].p2 + combinedOffset];
+    float secondFourth = img[fastRect[1].p3 + combinedOffset];
+    float secondRect = secondFirst - secondSecond - secondThird + secondFourth;
+    float ret = rect[0].weight * (firstRect) +
+        rect[1].weight * (secondRect);
     if (rect[2].weight != 0.0f)
         ret += rect[2].weight * (img[fastRect[2].p0 + combinedOffset] - img[fastRect[2].p1 + combinedOffset] - img[fastRect[2].p2 + combinedOffset] + img[fastRect[2].p3 + combinedOffset]);
     return ret;
