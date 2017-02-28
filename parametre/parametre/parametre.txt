@@ -1,0 +1,84 @@
+1. --train <training file> <number of iterations>: trains on a given dataset.
+2. --traintest <training file> <test file> <number of iterations>: trains
+	on a given dataset and provides performance metrics in every iteration on a given test set.
+3. --test <test file> <model file> <number of iterations> [<outfile>]: tests
+	on a given dataset using a model file up to a given number of iterations.
+4. --posteriors <test file> <model file> <outfile> <number of iterations>
+	[<period>]: outputs the posteriors (the classification score) for a given dataset using a
+	model file up to a given number of iterations.
+5. --cmatrix <test file> <model file> [<outfile>]: outputs the confusion matrix
+	to the standard output or, if provided, to a file.
+	
+	The following optional parameters can be provided to all learners:
+1. --shypname <modelfile>: the output model file name. If not given, the default is
+	shyp.xml.
+2. --outputinfo <outfile> <name of metrics>: the different metrics or performance
+	measure one would like to output. Please note that the description of the output is written
+	in <outfile>.header. See Section 7.1 for the description of the metrics.
+
+Pre AdaBoost
+--weightpolicy sharepoints
+--weightpolicy sharelabels
+--weightpolicy proportional
+--weightpolicy balanced
+
+Pre kazdu weightpolicy je tam vzorcek ako sa vyhodnocuje, pozri dokumentáciu.
+
+
+If the time limit is given using
+--timelimit <time limit in minutes>
+training will stop either if the trainin time hits the limit or if the number of iterations hits the
+limit, whichever occurs first.
+
+--earlystopping <minIterations> <smoothingWindowRate> <maxLookaheadRate>
+--earlystoppingoutputinfo <outputColumn>
+
+KAPITOLA 5 (Najlepsie ked si to pozries v dokumentacii)
+The base learner is set using
+--learnertype <base learner name>
+			  SingleStumpLearner
+			  HaarSingleStumpLearner
+			  
+			  
+
+--learnertype TreeLearner --baselearnertype <base learner>\\
+<number of leaves>
+
+--learnertype ProductLearner --baselearnertype <base learner>\\
+<number of terms>
+
+
+
+KAPITOLA 7
+7.1 The output information
+Some strong learners, such as ADABOOST.MH, allow the user the specify the performance metrics
+to be written in the output file in each iteration t using
+--outputinfo <file> <output list>
+where the <output list> corresponds to the concatenation of three letter codes. The following
+metrics are implemented:
+
+	vela metrik a vzorcov, pozri v dokumentacii
+
+	
+	
+	
+The 
+--verbose <level> option can be used to control the amount of information written to
+the standard output.
+
+The strong classifier is serialized in XML format in each iteration. The name of the model file can
+be specifed by
+--shypname <file name>
+The default name is shyp.xml.
+
+Some strong learners, such as AdaBoostMH and FilterBoost, are anytime algorithms: they
+output the strong classifier and the logging information in each iteration and they can be resumed
+if they are interrupted. The model file can be specified using
+--resume <file name>
+
+Turning the --constant switch on will force the algorithm to explicitly try the constant classifier
+j(x) = 1 in each iteration, and use it if its edge is higher than the edge of any of the other
+base classifiers tested in the given iteration.
+
+The random seed used to initialize the pseudorandom number generator can be set using
+--seed <number>
