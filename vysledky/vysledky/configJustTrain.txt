@@ -1,0 +1,14 @@
+#multiboost.exe --configfile ./cv01_2/futbalistiIntegral2/configJustTrain.txt >> ./cv01_2/futbalistiIntegral2/outputJustTrain.txt
+
+fileformat arff
+train ./trainGrayScaleIntegral.arff 500
+
+learnertype TreeLearner
+baselearnertype HaarSingleStumpLearner 2
+csample num 20
+iisize 97x161
+
+outputinfo ./cv01_2/futbalistiIntegral2/resultJustTrain.txt
+shypname ./cv01_2/futbalistiIntegral2/strongClassfierJustTrain.xml
+
+seed 73 
