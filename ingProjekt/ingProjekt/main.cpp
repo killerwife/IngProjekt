@@ -254,7 +254,7 @@ void rectOnly(std::string imageName)
 	cv::Mat result = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
 	//cv::imshow("bla", result);
 	//cv::waitKey(0);
-	auto resultBoundingBoxes = nonMaxSuppression(rects, 0.3, 4);
+	auto resultBoundingBoxes = nonMaxSuppression(rects, 0.3f, 4);
 	for (cv::Rect& box : resultBoundingBoxes)
 	{
 		rectangle(result, box, (0, 0, 255), 2);

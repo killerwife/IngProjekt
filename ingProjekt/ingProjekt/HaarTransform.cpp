@@ -55,7 +55,7 @@ void HaarTransform::SetImageBig(cv::Mat& image)
     for (double scaleFactor = 1;;scaleFactor*=1.1,count++)
     {
         cv::Mat tempImage;
-        cv::Size tempSize(std::round(x*(1. / scaleFactor)), std::round(y*(1. / scaleFactor)));
+        cv::Size tempSize(std::round((double)x*(1. / scaleFactor)), std::round((double)y*(1. / scaleFactor)));
         if (m_winSize.height > tempSize.height || m_winSize.width > tempSize.width)
             break;
         cv::resize(m_image,tempImage,tempSize);
@@ -84,7 +84,7 @@ void HaarTransform::SetImageBig(cv::Mat& image)
 
 void HaarTransform::CalculateFeatureVector(cv::Mat& features, int scale, int x, int y)
 {
-    long* data = (long*)features.data;
+    float* data = (float*)features.data;
     for (int i = 0; i < m_features[scale].size(); i++)
     {
         data[i] = m_features[scale][i].calc(m_integral[scale], m_tiltedIntegral[scale], i, x, y);

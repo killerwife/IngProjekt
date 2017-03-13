@@ -1,0 +1,13 @@
+Osnova
+AdaBoost
+tréning/detekcia
+OpenCV
+Haar Wavelet
+Computer Vision
+Viola-Jones kaskáda
+Deskriptory
+Klasifikátory
+Testovanie - false positives, true positives, false negatives, true negatives
+?
+Multiboost
+Detect Multi Scale
