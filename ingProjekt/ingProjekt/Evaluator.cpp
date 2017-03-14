@@ -1,8 +1,13 @@
 #include "Evaluator.h"
 
 
-Evaluator::Evaluator()
+Evaluator::Evaluator(std::vector<std::string> &cascadeXML)
 {
+    for (std::string& fileName : cascadeXML)
+    {
+        cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(fileName);
+        m_cascade.push_back(boost);
+    }
 }
 
 

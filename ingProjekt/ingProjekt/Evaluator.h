@@ -18,7 +18,7 @@
 class Evaluator
 {
 public:
-    Evaluator();
+    Evaluator(std::vector<std::string> &cascadeXML);
     ~Evaluator();
 
     void fillData(cv::Mat& data, cv::Mat& responses, bool backfitting, int countPos, int countNeg, std::string sampleFolders[3], int countBackfit = 0);
@@ -31,5 +31,8 @@ public:
 	void detectMultiScale(bool exportShit, std::string xml, std::string filename, std::string imageName);
 	void detectMultiScaleTemp(bool exportShit, std::string xml, std::string filename, std::string imageName);
     void detectMultiScaleProto(bool exportShit, std::string xml, std::string filename, std::string imageName);
+
+private:
+    std::vector<cv::Ptr<cv::ml::Boost>> m_cascade;
 };
 
