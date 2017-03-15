@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="boost">
+      <UniqueIdentifier>{58e17251-a8ca-4c61-9497-adfaecfc984b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -33,6 +36,12 @@
     <ClCompile Include="Evaluator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="boost\boost.cpp">
+      <Filter>boost</Filter>
+    </ClCompile>
+    <ClCompile Include="boost\tree.cpp">
+      <Filter>boost</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parser.h">
@@ -49,6 +58,12 @@
     </ClInclude>
     <ClInclude Include="Evaluator.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boost\precomp.hpp">
+      <Filter>boost</Filter>
+    </ClInclude>
+    <ClInclude Include="boost\boost.h">
+      <Filter>boost</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

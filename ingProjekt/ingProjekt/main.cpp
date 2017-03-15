@@ -1,6 +1,8 @@
 #include "Evaluator.h"
 #include <ctime>
 
+using namespace CV;
+
 void detection(std::string model, std::string file)
 {
 	//for time measure  
@@ -297,7 +299,8 @@ void commands(int defaultCommand = -1)
 			sampleFolders[0] = "trenovacieData\\pos\\";
 			sampleFolders[1] = "trenovacieData\\neg\\";
 			sampleFolders[2] = "backfitting\\";
-			Evaluator eval;
+            std::vector<std::string> filenames;
+            Evaluator eval(filenames);
 			eval.trainint(false, "HaarXMLSemestralnaPraca.xml", sampleFolders);
 			break;
 		}
@@ -307,7 +310,8 @@ void commands(int defaultCommand = -1)
 			sampleFolders[0] = "testovacieData\\pos\\";
 			sampleFolders[1] = "testovacieData\\neg\\";
 			sampleFolders[2] = "backfitting\\";
-			Evaluator eval;
+            std::vector<std::string> filenames;
+            Evaluator eval(filenames);
 			eval.detect(false, "HaarXMLSemestralnaPraca.xml", sampleFolders);
 			break;
 		}
@@ -320,7 +324,8 @@ void commands(int defaultCommand = -1)
 			std::getline(std::cin, line);
 			if (line[0] != '\n' && line[0] != '\0')
 				pic = line;
-			Evaluator eval;
+            std::vector<std::string> filenames;
+            Evaluator eval(filenames);
 			eval.detectMultiScaleTemp(false, "HaarXMLSemestralnaPraca.xml", "", pic);
 			break;
 		}
@@ -364,7 +369,8 @@ int main(int argc, char* argv[])
 	sampleFolders[1] = "D:\\Nenapadny priecinok\\testData\\pos\\";*/
 	//sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
 	//   clock_t begin = clock();
-	Evaluator eval;
+    std::vector<std::string> filenames;
+	Evaluator eval(filenames);
 	//eval.trainint(false,"HaarXMLPrezentacia.xml",sampleFolders);
 	//eval.detect(false, "HaarXMLPrezentacia.xml",sampleFolders);
 	//eval.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");

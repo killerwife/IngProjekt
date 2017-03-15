@@ -1,11 +1,12 @@
 #include "Evaluator.h"
 
+using namespace CV;
 
 Evaluator::Evaluator(std::vector<std::string> &cascadeXML)
 {
     for (std::string& fileName : cascadeXML)
     {
-        cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(fileName);
+        cv::Ptr<CV::BoostOwn> boost = cv::Algorithm::load<CV::BoostOwn>(fileName);
         m_cascade.push_back(boost);
     }
 }
@@ -307,7 +308,7 @@ void Evaluator::detectMultiScaleTemp(bool exportShit, std::string xml, std::stri
 
 void Evaluator::detectMultiScaleProto(bool exportShit, std::string xml, std::string filename, std::string imageName)
 {
-    cv::Ptr<cv::ml::Boost> boost = cv::Algorithm::load<cv::ml::Boost>(xml);
+    cv::Ptr<CV::BoostOwn> boost = cv::Algorithm::load<CV::BoostOwn>(xml);
     cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
     //cv::Mat img = cv::imread("C:\\GitHubCode\\IngProjekt\\ingProjekt\\ingProjekt\\" + imageName);
     cv::Mat result = img.clone();

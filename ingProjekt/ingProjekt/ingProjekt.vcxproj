@@ -101,7 +101,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\GitHubCode\opencvBuild\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\GitHubCode\IngProjekt\ingProjekt\ingProjekt\boost;C:\GitHubCode\opencvBuild\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,7 +138,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\GitHubCode\opencvBuild\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\GitHubCode\IngProjekt\ingProjekt\ingProjekt\boost;C:\GitHubCode\opencvBuild\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="boost\boost.cpp" />
+    <ClCompile Include="boost\tree.cpp" />
     <ClCompile Include="Evaluator.cpp" />
     <ClCompile Include="features.cpp" />
     <ClCompile Include="haarfeatures.cpp" />
@@ -159,6 +161,8 @@
     <ClCompile Include="Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="boost\boost.h" />
+    <ClInclude Include="boost\precomp.hpp" />
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="haarfeatures.h" />
     <ClInclude Include="HaarTransform.h" />
