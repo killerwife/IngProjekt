@@ -1,5 +1,45 @@
-Boost implementacia - cascade
+Viola-Jones
+- tréning je multithreaded na CPU - treba kompilova s TBB kninicou
+CPU
+- má interface na napojenie novıch featur
+- starı formát je len otázka ukladania modelu a funguje len pre HAAR verziu - nedá sa zreštartova u zapoèatı tréning cezeò
+- podpora pre HAAR/HOG/LBP
+Interface-
+Parametrovı -
+init, write, read, printfDefaults, printAttrs, scanAttr (funkcie na èítanie a zapisovanie parametrov)
++ implementácia nastavení
 
-paralelny vypocet hodnot featur
-zdedenie od stareho decision tree v 2.4.x
-vela * a málo referencii
+Vıpoèetnı
+init, writeFeatures, writeFeature, (funkcie na èítanie a zapisovanie stavov)
+operator() - vıpoèet danej hodnoty na danom indexe pre danı obrázok
+setImage - pridanie obrázku a spracovanie - pri haar vlnkách to je vıpoèet integrálneho obrazu a vygenerovanie všetkıch featur (miliony)
+
+po skompilovaní s TBB - jeden futbalovı obrázok 0.69 sekundy
+GPU
+- limitované na starı train_haarcascade a LBP reim
+- low lvl implementácia - iadna abstrakcia - nemonos jednoducho prida ïalšie featury
+- mrte réie len aby polia boli správne alokované a aby si kernel zapisoval na správne miesta, ve¾a štruktúr ktoré sú doslova kus pamäte
+- vyuitie texture memory - ???
+- kompaktné ukladanie modelu - bitove polia - pri prípadnej práci treba rozkresli pre pochopenie
+- - stages - nodes - features - rozklad modelu
+- parallel scan - prefix sum operation - jedno vlakno, jedna hodnota integralneho obrazu
+- slabe hypotézy
+- pracuje s jednokanálovım uint8 obrázkom
+algo
+1. alokácia - ve¾mi komplexná všade
+2. vıpoèet integralneho obrazu - integralny a squared integralny ???
+3. vıpoèet scalov
+4. hlavnı cyklus
+ - downsize casti integrálneho obrazu
+ - vıpoèet smerodajnej odchylky v kadom obdlnikovom regione obrazu pomocou integralneho obrazu - asi na normalizaciu hodnôt
+ - vıpoèet featur a "priebenıch hypotéz" - komplikované !!!
+ - "grow detections" - zväèšenie nálezov z bodu na obdånik (algoritmus si poznaèuje e nieèo našiel v danom bode a pomocou toho na ktorom sme scaly dopoèítame obdånik
+ - algoritmus na nájdenie najväèšieho nálezu - ako flag pre algoritmus
+5. zgrupovanie nálezov
+6. monos zakresli do obrazu obdåniky priamo na gpu
+
+Nenaprogramované funkcie - GPU
+zgrupovanie hypotez (detekènıch okien) beí na cpu - TODO v kode
+pouitie nového formátu modelu s HAAR kaskádou na GPU
+
+po skompilovaní s CUDA - jeden futbalovı obrázok 0.12 sekundy

@@ -1,13 +1,14 @@
 Osnova
-AdaBoost
-trÈning/detekcia
+⁄vod
 OpenCV
+Deskriptory
+Klasifik·tory
+AdaBoost - Viola-Jones, 2.4, 3.0 - trÈning/detekcia
 Haar Wavelet
 Computer Vision
 Viola-Jones kask·da
-Deskriptory
-Klasifik·tory
-Testovanie - false positives, true positives, false negatives, true negatives
-?
+- rozöÌriteænosù - CPU/GPU
+- DetectMultiScale
 Multiboost
-Detect Multi Scale
+CUDA
+Testovanie - false positives, true positives, false negatives, true negatives

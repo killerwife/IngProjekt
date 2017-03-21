@@ -1,5 +1,6 @@
 #include "Evaluator.h"
 #include <ctime>
+#include "opencv2\cudaobjdetect.hpp"
 
 using namespace CV;
 
@@ -22,7 +23,7 @@ void detection(std::string model, std::string file)
 
 	//declaration  
 	cv::CascadeClassifier ada_cpu;
-	//cv::cuda::CascadeClassifier ada_gpu;
+    cv::Ptr<cv::cuda::CascadeClassifier> ada_gpu = cv::cuda::CascadeClassifier::create(model);
 
 	if (!(ada_cpu.load(trainface)))
 	{
@@ -48,47 +49,47 @@ void detection(std::string model, std::string file)
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::time_t end_time = std::chrono::system_clock::to_time_t(end);
 
-    std::cout << "finished computation at " << std::ctime(&end_time)
+    std::cout << "CPU finished computation at " << std::ctime(&end_time)
         << "elapsed time: " << elapsed_seconds.count() << "s\n";
 	//Btime = cv::getTickCount();
 	//TakeTime = (Btime - Atime) / cv::getTickFrequency();
 	//printf("detected face(cpu version) = %d / %lf sec take.\n", faces.size(), TakeTime);
-	if (faces.size() >= 1)
-	{
-		for (int ji = 0; ji < faces.size(); ++ji)
-		{
-			rectangle(img, faces[ji], CV_RGB(0, 0, 255), 4);
-		}
-	}
+    if (faces.size() >= 1)
+    {
+        for (int ji = 0; ji < faces.size(); ++ji)
+        {
+            rectangle(img, faces[ji], CV_RGB(0, 0, 255), 4);
+        }
+    }
 
 	/////////////////////////////////////////////  
 	//gpu case face detection code  
 	cv::cuda::GpuMat faceBuf_gpu;
 	cv::cuda::GpuMat GpuImg;
-	GpuImg.upload(grayImg);
-	Atime = cv::getTickCount();
-	//int detectionNumber = ada_gpu.detectMultiScale(GpuImg, faceBuf_gpu);
-	Btime = cv::getTickCount();
-	TakeTime = (Btime - Atime) / cv::getTickFrequency();
+
+    GpuImg.upload(grayImg);
+    start = std::chrono::system_clock::now();
+    ada_gpu->detectMultiScale(GpuImg, faceBuf_gpu);
+    end = std::chrono::system_clock::now();
+
+    elapsed_seconds = end - start;
+    std::chrono::system_clock::to_time_t(end);
+
+    std::cout << "GPU finished computation at " << std::ctime(&end_time)
+        << "elapsed time: " << elapsed_seconds.count() << "s\n";
 	//printf("detected face(gpu version) =%d / %lf sec take.\n", detectionNumber, TakeTime);
-	cv::Mat faces_downloaded;
-	//if (detectionNumber >= 1)
-	//{
-	//    faceBuf_gpu.colRange(0, detectionNumber).download(faces_downloaded);
-	//    cv::Rect* faces = faces_downloaded.ptr< cv::Rect>();
 
+//    std::vector<cv::Rect> faces;
+    ada_gpu->convert(faceBuf_gpu, faces);
 
-	//    for (int ji = 0; ji < detectionNumber; ++ji)
-	//    {
-	//        rectangle(img, cv::Point(faces[ji].x, faces[ji].y), cv::Point(faces[ji].x + faces[ji].width, faces[ji].y + faces[ji].height), CV_RGB(255, 0, 0), 2);
-	//    }
-	//}
+    for (int i = 0; i < faces.size(); ++i)
+        cv::rectangle(img, faces[i], cv::Scalar(255));
 
 
 	/////////////////////////////////////////////////  
 	//result display  
-	//imshow("origin", img);
-	//cv::waitKey(0);
+	imshow("origin", img);
+	cv::waitKey(0);
 }
 
 static cv::Ptr<cv::ml::TrainData>
@@ -379,16 +380,16 @@ int main(int argc, char* argv[])
 	//printf("Seconds %lf\n", elapsed_secs);
 	//commands();
 
-    std::chrono::time_point<std::chrono::system_clock> start, end;
-    start = std::chrono::system_clock::now();
-    eval.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
-    //detection("haarcascade_fullbody.xml", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
-    end = std::chrono::system_clock::now();
+    //std::chrono::time_point<std::chrono::system_clock> start, end;
+    //start = std::chrono::system_clock::now();
+    //eval.detectMultiScaleProto(false, "HaarXML2640.xml", "outputHaar1.png", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
+    detection("haarcascade_fullbody.xml", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
+    //end = std::chrono::system_clock::now();
 
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+    //std::chrono::duration<double> elapsed_seconds = end - start;
+    //std::time_t end_time = std::chrono::system_clock::to_time_t(end);
 
-    std::cout << "finished computation at " << std::ctime(&end_time)
-        << "elapsed time: " << elapsed_seconds.count() << "s\n";
+    //std::cout << "finished computation at " << std::ctime(&end_time)
+    //    << "elapsed time: " << elapsed_seconds.count() << "s\n";
 	return 0;
 }
