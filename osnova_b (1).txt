@@ -1,0 +1,27 @@
+Osnova
+
+⁄vod
+
+---- teoreticka cast ----
+AdaBoost - co to je, ako funguje, kde sa pouziva
+		- sucastou bude aj popis slabych klasifikatorov - rozhodovacie stromy
+Obrazove deskriptory a AdaBoost - Haar, HOG, pripadne ine pouzivane
+Viola-Jones kaskada - popise sa tato modifikacia Adaboostu
+OpenCV - zakladny popis
+	
+---- prakticka cast ----
+Vyber vhodnej implementacie AdaBoostu
+- popisu sa moznosti v OpenCV (AdaBoost, Viola-Jones, 2.4, 3.0 - trÈning/detekcia) a Multibooste (strucne sa spomenie + jeho vyhody/nevyhody oproti OpenCV implementacii)
+- Viola-Jones kask·da
+	- rozöÌriteænosù - CPU/GPU
+	- DetectMultiScale
+- CUDA
+
+Nasledovat budu dalsie implementacne veci
+- vlastne Haarove vlnky
+- vlastny multiscale detect a jeho porovnanie s existujucim
+- napojenie deskriptora na multiscale detect v OpenCV
+- otestovanie CPU a GPU implementacie OpenCV multiscale detektu
+...
+
+Testovanie - false positives, true positives, false negatives, true negatives
