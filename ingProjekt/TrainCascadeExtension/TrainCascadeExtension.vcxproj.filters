@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="TrainCascade">
+      <UniqueIdentifier>{db334bd4-534c-4542-9bfc-e6aea0175d3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DetectCascade">
+      <UniqueIdentifier>{ded14c25-0f36-44a2-a016-cdc41a849fe8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\traincascade\boost.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\cascadeclassifier.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\features.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\haarfeatures.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\HOGfeatures.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\imagestorage.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\lbpfeatures.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\old_ml_boost.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\old_ml_data.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\old_ml_inner_functions.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\old_ml_tree.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\traincascade\traincascade.cpp">
+      <Filter>TrainCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="detectcascade\cascadedetect.cpp">
+      <Filter>DetectCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="detectcascade\cascadedetect_convert.cpp">
+      <Filter>DetectCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="detectcascade\detection_based_tracker.cpp">
+      <Filter>DetectCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="detectcascade\haar.cpp">
+      <Filter>DetectCascade</Filter>
+    </ClCompile>
+    <ClCompile Include="detectcascade\hog.cpp">
+      <Filter>DetectCascade</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\traincascade\boost.h">
+      <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\traincascade\cascadeclassifier.h">
+      <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\traincascade\haarfeatures.h">
+      <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\traincascade\HOGfeatures.h">
+      <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\traincascade\imagestorage.h">
+      <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\traincascade\lbpfeatures.h">
+      <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\traincascade\old_ml.hpp">
+      <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\traincascade\old_ml_precomp.hpp">
+      <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\traincascade\traincascade_features.h">
+      <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="detectcascade\cascadedetect.hpp">
+      <Filter>DetectCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="detectcascade\precomp.hpp">
+      <Filter>DetectCascade</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
