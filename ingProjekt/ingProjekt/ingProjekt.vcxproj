@@ -100,15 +100,16 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\GitHubCode\IngProjekt\ingProjekt\ingProjekt\boost;C:\GitHubCode\opencvBuild\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Sources\tbb44_20160803oss_win\tbb44_20160803oss\include;C:\GitHubCode\IngProjekt\ingProjekt\src;C:\GitHubCode\opencvBuild\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
+      <AdditionalOptions>/Qpar %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opencv_calib3d320d.lib;opencv_core320d.lib;opencv_cudaarithm320d.lib;opencv_cudabgsegm320d.lib;opencv_cudacodec320d.lib;opencv_cudafeatures2d320d.lib;opencv_cudafilters320d.lib;opencv_cudaimgproc320d.lib;opencv_cudalegacy320d.lib;opencv_cudaobjdetect320d.lib;opencv_cudaoptflow320d.lib;opencv_cudastereo320d.lib;opencv_cudawarping320d.lib;opencv_cudev320d.lib;opencv_features2d320d.lib;opencv_flann320d.lib;opencv_highgui320d.lib;opencv_imgcodecs320d.lib;opencv_imgproc320d.lib;opencv_ml320d.lib;opencv_objdetect320d.lib;opencv_photo320d.lib;opencv_shape320d.lib;opencv_stitching320d.lib;opencv_superres320d.lib;opencv_video320d.lib;opencv_videoio320d.lib;opencv_videostab320d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\GitHubCode\opencvBuild\install\x64\vc14\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Sources\tbb44_20160803oss_win\tbb44_20160803oss\lib\intel64\vc14;C:\GitHubCode\opencvBuild\install\x64\vc14\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -138,10 +139,11 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\GitHubCode\IngProjekt\ingProjekt\ingProjekt\boost;C:\GitHubCode\opencvBuild\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Sources\tbb44_20160803oss_win\tbb44_20160803oss\include;C:\GitHubCode\IngProjekt\ingProjekt\src;C:\GitHubCode\opencvBuild\install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>false</SDLCheck>
+      <AdditionalOptions>/Qpar %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,27 +151,37 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>opencv_calib3d320.lib;opencv_core320.lib;opencv_cudaarithm320.lib;opencv_cudabgsegm320.lib;opencv_cudacodec320.lib;opencv_cudafeatures2d320.lib;opencv_cudafilters320.lib;opencv_cudaimgproc320.lib;opencv_cudalegacy320.lib;opencv_cudaobjdetect320.lib;opencv_cudaoptflow320.lib;opencv_cudastereo320.lib;opencv_cudawarping320.lib;opencv_cudev320.lib;opencv_features2d320.lib;opencv_flann320.lib;opencv_highgui320.lib;opencv_imgcodecs320.lib;opencv_imgproc320.lib;opencv_ml320.lib;opencv_objdetect320.lib;opencv_photo320.lib;opencv_shape320.lib;opencv_stitching320.lib;opencv_superres320.lib;opencv_video320.lib;opencv_videoio320.lib;opencv_videostab320.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\GitHubCode\opencvBuild\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Sources\tbb44_20160803oss_win\tbb44_20160803oss\lib\intel64\vc14;C:\GitHubCode\opencvBuild\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="boost\boost.cpp" />
-    <ClCompile Include="boost\tree.cpp" />
-    <ClCompile Include="Evaluator.cpp" />
-    <ClCompile Include="features.cpp" />
-    <ClCompile Include="haarfeatures.cpp" />
-    <ClCompile Include="HaarTransform.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="..\src\boost3.0\boost.cpp" />
+    <ClCompile Include="..\src\boost3.0\tree.cpp" />
+    <ClCompile Include="..\src\detectcascade\cascadedetect.cpp" />
+    <ClCompile Include="..\src\detectcascade\cascadedetect_convert.cpp" />
+    <ClCompile Include="..\src\detectcascade\detection_based_tracker.cpp" />
+    <ClCompile Include="..\src\detectcascade\haar.cpp" />
+    <ClCompile Include="..\src\detectcascade\hog.cpp" />
+    <ClCompile Include="..\src\prototyping\Evaluator.cpp" />
+    <ClCompile Include="..\src\prototyping\FeaturePrototypes.cpp" />
+    <ClCompile Include="..\src\prototyping\features.cpp" />
+    <ClCompile Include="..\src\prototyping\haarfeatures.cpp" />
+    <ClCompile Include="..\src\prototyping\HaarTransform.cpp" />
+    <ClCompile Include="..\src\prototyping\main.cpp" />
+    <ClCompile Include="..\src\prototyping\Parser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="boost\boost.h" />
-    <ClInclude Include="boost\precomp.hpp" />
-    <ClInclude Include="Evaluator.h" />
-    <ClInclude Include="haarfeatures.h" />
-    <ClInclude Include="HaarTransform.h" />
-    <ClInclude Include="Parser.h" />
-    <ClInclude Include="traincascade_features.h" />
+    <ClInclude Include="..\src\boost3.0\boost.h" />
+    <ClInclude Include="..\src\boost3.0\precomp.hpp" />
+    <ClInclude Include="..\src\detectcascade\cascadedetect.hpp" />
+    <ClInclude Include="..\src\detectcascade\precomp.hpp" />
+    <ClInclude Include="..\src\prototyping\Evaluator.h" />
+    <ClInclude Include="..\src\prototyping\FeaturePrototypes.h" />
+    <ClInclude Include="..\src\prototyping\haarfeatures.h" />
+    <ClInclude Include="..\src\prototyping\HaarTransform.h" />
+    <ClInclude Include="..\src\prototyping\Parser.h" />
+    <ClInclude Include="..\src\prototyping\traincascade_features.h" />
+    <ClInclude Include="..\src\SharedDefines\SharedDefines.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

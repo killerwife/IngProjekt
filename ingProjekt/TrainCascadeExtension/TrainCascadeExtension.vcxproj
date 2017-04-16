@@ -18,6 +18,34 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\traincascade\boost.cpp" />
+    <ClCompile Include="..\src\traincascade\cascadeclassifier.cpp" />
+    <ClCompile Include="..\src\traincascade\features.cpp" />
+    <ClCompile Include="..\src\traincascade\haarfeatures.cpp" />
+    <ClCompile Include="..\src\traincascade\HOGfeatures.cpp" />
+    <ClCompile Include="..\src\traincascade\imagestorage.cpp" />
+    <ClCompile Include="..\src\traincascade\lbpfeatures.cpp" />
+    <ClCompile Include="..\src\traincascade\old_ml_boost.cpp" />
+    <ClCompile Include="..\src\traincascade\old_ml_data.cpp" />
+    <ClCompile Include="..\src\traincascade\old_ml_inner_functions.cpp" />
+    <ClCompile Include="..\src\traincascade\old_ml_tree.cpp" />
+    <ClCompile Include="..\src\traincascade\traincascade.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\traincascade\boost.h" />
+    <ClInclude Include="..\src\traincascade\cascadeclassifier.h" />
+    <ClInclude Include="..\src\traincascade\haarfeatures.h" />
+    <ClInclude Include="..\src\traincascade\HOGfeatures.h" />
+    <ClInclude Include="..\src\traincascade\imagestorage.h" />
+    <ClInclude Include="..\src\traincascade\lbpfeatures.h" />
+    <ClInclude Include="..\src\traincascade\old_ml.hpp" />
+    <ClInclude Include="..\src\traincascade\old_ml_precomp.hpp" />
+    <ClInclude Include="..\src\traincascade\traincascade_features.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\src\traincascade\CMakeLists.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{21E18051-B488-4DE3-B0BF-3F9E68F42323}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -154,38 +182,6 @@
       <AdditionalLibraryDirectories>C:\GitHubCode\opencvBuild\install\x64\vc14\lib;C:\Sources\tbb44_20160803oss_win\tbb44_20160803oss\lib\intel64\vc14;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\traincascade\boost.cpp" />
-    <ClCompile Include="..\traincascade\cascadeclassifier.cpp" />
-    <ClCompile Include="..\traincascade\features.cpp" />
-    <ClCompile Include="..\traincascade\haarfeatures.cpp" />
-    <ClCompile Include="..\traincascade\HOGfeatures.cpp" />
-    <ClCompile Include="..\traincascade\imagestorage.cpp" />
-    <ClCompile Include="..\traincascade\lbpfeatures.cpp" />
-    <ClCompile Include="..\traincascade\old_ml_boost.cpp" />
-    <ClCompile Include="..\traincascade\old_ml_data.cpp" />
-    <ClCompile Include="..\traincascade\old_ml_inner_functions.cpp" />
-    <ClCompile Include="..\traincascade\old_ml_tree.cpp" />
-    <ClCompile Include="..\traincascade\traincascade.cpp" />
-    <ClCompile Include="detectcascade\cascadedetect.cpp" />
-    <ClCompile Include="detectcascade\cascadedetect_convert.cpp" />
-    <ClCompile Include="detectcascade\detection_based_tracker.cpp" />
-    <ClCompile Include="detectcascade\haar.cpp" />
-    <ClCompile Include="detectcascade\hog.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\traincascade\boost.h" />
-    <ClInclude Include="..\traincascade\cascadeclassifier.h" />
-    <ClInclude Include="..\traincascade\haarfeatures.h" />
-    <ClInclude Include="..\traincascade\HOGfeatures.h" />
-    <ClInclude Include="..\traincascade\imagestorage.h" />
-    <ClInclude Include="..\traincascade\lbpfeatures.h" />
-    <ClInclude Include="..\traincascade\old_ml.hpp" />
-    <ClInclude Include="..\traincascade\old_ml_precomp.hpp" />
-    <ClInclude Include="..\traincascade\traincascade_features.h" />
-    <ClInclude Include="detectcascade\cascadedetect.hpp" />
-    <ClInclude Include="detectcascade\precomp.hpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

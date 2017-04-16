@@ -1,69 +1,99 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="DetectCascade">
+      <UniqueIdentifier>{fb6ce329-1bbf-4502-a596-8ee167414f7d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Prototyping">
+      <UniqueIdentifier>{9ee0be11-875b-484f-985a-8a8c0942e4fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="boost">
+    <Filter Include="boost3.0">
       <UniqueIdentifier>{58e17251-a8ca-4c61-9497-adfaecfc984b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Prototyping\NewFeatures">
+      <UniqueIdentifier>{ab11cbce-a738-480c-82c4-db5da0ad0272}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SharedDefines">
+      <UniqueIdentifier>{9e57e96f-9f2b-4f6f-b255-2485f1115d5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\detectcascade\cascadedetect.cpp">
+      <Filter>DetectCascade</Filter>
     </ClCompile>
-    <ClCompile Include="Parser.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\detectcascade\cascadedetect_convert.cpp">
+      <Filter>DetectCascade</Filter>
     </ClCompile>
-    <ClCompile Include="HaarTransform.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\detectcascade\detection_based_tracker.cpp">
+      <Filter>DetectCascade</Filter>
     </ClCompile>
-    <ClCompile Include="haarfeatures.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\detectcascade\haar.cpp">
+      <Filter>DetectCascade</Filter>
     </ClCompile>
-    <ClCompile Include="features.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\detectcascade\hog.cpp">
+      <Filter>DetectCascade</Filter>
     </ClCompile>
-    <ClCompile Include="Evaluator.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\src\prototyping\Evaluator.cpp">
+      <Filter>Prototyping</Filter>
     </ClCompile>
-    <ClCompile Include="boost\boost.cpp">
-      <Filter>boost</Filter>
+    <ClCompile Include="..\src\prototyping\features.cpp">
+      <Filter>Prototyping</Filter>
     </ClCompile>
-    <ClCompile Include="boost\tree.cpp">
-      <Filter>boost</Filter>
+    <ClCompile Include="..\src\prototyping\haarfeatures.cpp">
+      <Filter>Prototyping</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\prototyping\HaarTransform.cpp">
+      <Filter>Prototyping</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\prototyping\main.cpp">
+      <Filter>Prototyping</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\prototyping\Parser.cpp">
+      <Filter>Prototyping</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\boost3.0\tree.cpp">
+      <Filter>boost3.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\boost3.0\boost.cpp">
+      <Filter>boost3.0</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\prototyping\FeaturePrototypes.cpp">
+      <Filter>Prototyping\NewFeatures</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Parser.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\src\detectcascade\cascadedetect.hpp">
+      <Filter>DetectCascade</Filter>
     </ClInclude>
-    <ClInclude Include="HaarTransform.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\src\detectcascade\precomp.hpp">
+      <Filter>DetectCascade</Filter>
     </ClInclude>
-    <ClInclude Include="haarfeatures.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\src\prototyping\Evaluator.h">
+      <Filter>Prototyping</Filter>
     </ClInclude>
-    <ClInclude Include="traincascade_features.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\src\prototyping\haarfeatures.h">
+      <Filter>Prototyping</Filter>
     </ClInclude>
-    <ClInclude Include="Evaluator.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\src\prototyping\HaarTransform.h">
+      <Filter>Prototyping</Filter>
     </ClInclude>
-    <ClInclude Include="boost\precomp.hpp">
-      <Filter>boost</Filter>
+    <ClInclude Include="..\src\prototyping\Parser.h">
+      <Filter>Prototyping</Filter>
     </ClInclude>
-    <ClInclude Include="boost\boost.h">
-      <Filter>boost</Filter>
+    <ClInclude Include="..\src\prototyping\traincascade_features.h">
+      <Filter>Prototyping</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\boost3.0\precomp.hpp">
+      <Filter>boost3.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\boost3.0\boost.h">
+      <Filter>boost3.0</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\prototyping\FeaturePrototypes.h">
+      <Filter>Prototyping\NewFeatures</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SharedDefines\SharedDefines.h">
+      <Filter>SharedDefines</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
