@@ -45,6 +45,9 @@
     <ClCompile Include="..\src\traincascade\traincascade.cpp">
       <Filter>TrainCascade</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\traincascade\Added\SHOGfeatures.cpp">
+      <Filter>TrainCascade\Added</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\traincascade\boost.h">
@@ -73,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="..\src\traincascade\traincascade_features.h">
       <Filter>TrainCascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\traincascade\Added\SHOGfeatures.h">
+      <Filter>TrainCascade\Added</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 #include "haarfeatures.h"
 #include "lbpfeatures.h"
 #include "HOGfeatures.h" //new
+#include "Added/SHOGfeatures.h" // custom DP
 #include "boost.h"
 
 #define CC_CASCADE_FILENAME "cascade.xml"
@@ -54,7 +55,8 @@
 #define CC_RECT "rect"
 
 #define CC_HOG "HOG"
-#define CC_SHOG "SHOG"
+
+#define CC_SHOG "SHOG" // custom DP
 
 #ifdef _WIN32
 #define TIME( arg ) (((double) clock()) / CLOCKS_PER_SEC)

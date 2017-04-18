@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\traincascade\Added\SHOGfeatures.cpp" />
     <ClCompile Include="..\src\traincascade\boost.cpp" />
     <ClCompile Include="..\src\traincascade\cascadeclassifier.cpp" />
     <ClCompile Include="..\src\traincascade\features.cpp" />
@@ -33,6 +34,7 @@
     <ClCompile Include="..\src\traincascade\traincascade.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\traincascade\Added\SHOGfeatures.h" />
     <ClInclude Include="..\src\traincascade\boost.h" />
     <ClInclude Include="..\src\traincascade\cascadeclassifier.h" />
     <ClInclude Include="..\src\traincascade\haarfeatures.h" />

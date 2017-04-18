@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\boost3.0\boost.cpp" />
     <ClCompile Include="..\src\boost3.0\tree.cpp" />
+    <ClCompile Include="..\src\detectcascade\Added\SHOGfeatures.cpp" />
     <ClCompile Include="..\src\detectcascade\cascadedetect.cpp" />
     <ClCompile Include="..\src\detectcascade\cascadedetect_convert.cpp" />
     <ClCompile Include="..\src\detectcascade\detection_based_tracker.cpp" />
@@ -173,6 +174,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\boost3.0\boost.h" />
     <ClInclude Include="..\src\boost3.0\precomp.hpp" />
+    <ClInclude Include="..\src\detectcascade\Added\SHOGfeatures.h" />
     <ClInclude Include="..\src\detectcascade\cascadedetect.hpp" />
     <ClInclude Include="..\src\detectcascade\precomp.hpp" />
     <ClInclude Include="..\src\prototyping\Evaluator.h" />

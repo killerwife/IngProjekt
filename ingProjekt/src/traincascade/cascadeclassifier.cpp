@@ -30,6 +30,7 @@ void CvCascadeParams::write( FileStorage &fs ) const
     string featureTypeStr = featureType == CvFeatureParams::HAAR ? CC_HAAR :
                             featureType == CvFeatureParams::LBP ? CC_LBP :
                             featureType == CvFeatureParams::HOG ? CC_HOG :
+                            featureType == CvFeatureParams::SHOG ? CC_SHOG :
                             0;
     CV_Assert( !stageTypeStr.empty() );
     fs << CC_FEATURE_TYPE << featureTypeStr;
@@ -56,6 +57,7 @@ bool CvCascadeParams::read( const FileNode &node )
     featureType = !featureTypeStr.compare( CC_HAAR ) ? CvFeatureParams::HAAR :
                   !featureTypeStr.compare( CC_LBP ) ? CvFeatureParams::LBP :
                   !featureTypeStr.compare( CC_HOG ) ? CvFeatureParams::HOG :
+                  !featureTypeStr.compare( CC_SHOG ) ? CvFeatureParams::SHOG :
                   -1;
     if (featureType == -1)
         return false;

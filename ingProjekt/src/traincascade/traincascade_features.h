@@ -1,6 +1,7 @@
 #ifndef _OPENCV_FEATURES_H_
 #define _OPENCV_FEATURES_H_
 
+#include <opencv2/core.hpp>
 #include "imagestorage.h"
 #include <stdio.h>
 

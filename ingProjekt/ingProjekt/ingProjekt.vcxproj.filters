@@ -16,6 +16,9 @@
     <Filter Include="SharedDefines">
       <UniqueIdentifier>{9e57e96f-9f2b-4f6f-b255-2485f1115d5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DetectCascade\Added">
+      <UniqueIdentifier>{9f49ad51-3c0f-44f7-bfbb-f3c64c92a915}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\detectcascade\cascadedetect.cpp">
@@ -60,6 +63,9 @@
     <ClCompile Include="..\src\prototyping\FeaturePrototypes.cpp">
       <Filter>Prototyping\NewFeatures</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\detectcascade\Added\SHOGfeatures.cpp">
+      <Filter>DetectCascade\Added</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\detectcascade\cascadedetect.hpp">
@@ -94,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="..\src\SharedDefines\SharedDefines.h">
       <Filter>SharedDefines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\detectcascade\Added\SHOGfeatures.h">
+      <Filter>DetectCascade\Added</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

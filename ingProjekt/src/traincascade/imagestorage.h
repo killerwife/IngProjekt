@@ -1,6 +1,7 @@
 #ifndef _OPENCV_IMAGESTORAGE_H_
 #define _OPENCV_IMAGESTORAGE_H_
 
+#include <string>
 
 class CvCascadeImageReader
 {

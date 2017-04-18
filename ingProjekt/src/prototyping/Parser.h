@@ -9,6 +9,8 @@ public:
     ~Parser();
     void Parser::parseNegatives(); // Parses negative pictures from a hardcoded folder 
     void Parser::parsePositives(); // Parses positive pictures from a hardcoded folder
+    void MakeDatFile(std::string & path, std::string& outputFile);
+    void GetFileNames(std::string & path, std::vector<std::string>& filenames);
 	/*
 	Function, which opens a folder, and picks the first n pictures, up to count. It inserts one line into MATs output
 	and responses per picture loaded. Response is generally 0 or 1, based on whether given folder contains positive or negative pictures.
