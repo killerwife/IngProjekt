@@ -34,41 +34,31 @@ void FeaturePrototypes::ComputeSHog(cv::Mat& image)
         }
     }
     cv::Mat imageChannels[8] = {
-        cv::Mat(rows, cols, CV_32F, &images[rows*cols * 0]),
-        cv::Mat(rows, cols, CV_32F, &images[rows*cols * 1]),
-        cv::Mat(rows, cols, CV_32F, &images[rows*cols * 2]),
-        cv::Mat(rows, cols, CV_32F, &images[rows*cols * 3]),
-        cv::Mat(rows, cols, CV_32F, &images[rows*cols * 4]),
-        cv::Mat(rows, cols, CV_32F, &images[rows*cols * 5]),
-        cv::Mat(rows, cols, CV_32F, &images[rows*cols * 6]),
-        cv::Mat(rows, cols, CV_32F, &images[rows*cols * 7]),
+        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 0]),
+        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 1]),
+        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 2]),
+        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 3]),
+        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 4]),
+        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 5]),
+        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 6]),
+        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 7]),
     };
-    float* integral = new float[rows*cols * 8];
+    int* integral = new int[rows*cols * 8];
     cv::Mat integralChannels[8] = {
-        cv::Mat(rows, cols, CV_32F, &integral[rows*cols * 0]),
-        cv::Mat(rows, cols, CV_32F, &integral[rows*cols * 1]),
-        cv::Mat(rows, cols, CV_32F, &integral[rows*cols * 2]),
-        cv::Mat(rows, cols, CV_32F, &integral[rows*cols * 3]),
-        cv::Mat(rows, cols, CV_32F, &integral[rows*cols * 4]),
-        cv::Mat(rows, cols, CV_32F, &integral[rows*cols * 5]),
-        cv::Mat(rows, cols, CV_32F, &integral[rows*cols * 6]),
-        cv::Mat(rows, cols, CV_32F, &integral[rows*cols * 7]),
+        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 0]),
+        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 1]),
+        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 2]),
+        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 3]),
+        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 4]),
+        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 5]),
+        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 6]),
+        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 7]),
     };
     tbb::parallel_for(size_t(0), size_t(7), [&imageChannels, &integralChannels](size_t i) { cv::integral(imageChannels[i], integralChannels[i]); });
     const int sizeRows = 4, sizeCols = 4;
     const int stepRows = 1, stepCols = 1;
     int histSize = (rows / stepRows - sizeRows) * (cols / stepCols - sizeCols);
     int* memory = new int[histSize * 8];
-    cv::Mat histogramChannels[8] = {
-        cv::Mat(rows / 4, cols / 4, CV_32S, &memory[histSize * 0]),
-        cv::Mat(rows / 4, cols / 4, CV_32S, &memory[histSize * 1]),
-        cv::Mat(rows / 4, cols / 4, CV_32S, &memory[histSize * 2]),
-        cv::Mat(rows / 4, cols / 4, CV_32S, &memory[histSize * 3]),
-        cv::Mat(rows / 4, cols / 4, CV_32S, &memory[histSize * 4]),
-        cv::Mat(rows / 4, cols / 4, CV_32S, &memory[histSize * 5]),
-        cv::Mat(rows / 4, cols / 4, CV_32S, &memory[histSize * 6]),
-        cv::Mat(rows / 4, cols / 4, CV_32S, &memory[histSize * 7]),
-    };
     outputTimer([&]() {
         tbb::parallel_for(size_t(0), size_t(7), [&](size_t l) {
             for (int i = 0; i < rows - sizeRows; i += stepRows)

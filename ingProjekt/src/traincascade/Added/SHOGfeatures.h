@@ -6,6 +6,7 @@
 #define BINS 8
 #define CELL_SIDE 4
 #define STEP_SIZE 1
+#define S_HOG "shog"
 
 class CvSHOGFeatureParams : public CvFeatureParams
 {
@@ -50,13 +51,13 @@ protected:
     int histCols;
 };
 
-float SHOGEvaluator::operator()(int varIdx, int sampleIdx) const
+inline float SHOGEvaluator::operator()(int varIdx, int sampleIdx) const
 {
     return features[varIdx].calc(histogram[sampleIdx], histSize, histCols);
 }
 
 inline float SHOGEvaluator::Feature::calc(std::vector<int> hist, int step, int columns) const
 {
-    return hist[data.ori * step + data.x * columns + data.y];
+    return float(hist[data.ori * step + data.x * columns + data.y]);
 }
 

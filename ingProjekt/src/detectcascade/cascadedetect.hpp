@@ -16,7 +16,8 @@ public:
     {
         HAAR = 0,
         LBP  = 1,
-        HOG  = 2
+        HOG  = 2,
+        SHOG = 3,
     };
 
     struct ScaleData
@@ -258,6 +259,8 @@ protected:
 #define CC_RECT "rect"
 
 #define CC_HOG  "HOG"
+
+#define CC_SHOG "SHOG"
 
 #define CV_SUM_PTRS( p0, p1, p2, p3, sum, rect, step )                    \
     /* (x, y) */                                                          \

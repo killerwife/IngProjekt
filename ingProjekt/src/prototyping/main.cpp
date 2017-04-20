@@ -6,7 +6,7 @@
 
 using namespace CV;
 
-void detection(std::string model, std::string file)
+void detection(std::string model, std::string file, bool GPU)
 {
     //window  
     //cv::namedWindow("origin");
@@ -21,7 +21,6 @@ void detection(std::string model, std::string file)
 
     //declaration  
     cv::CascadeClassifier ada_cpu;
-    cv::Ptr<cv::cuda::CascadeClassifier> ada_gpu = cv::cuda::CascadeClassifier::create(model);
 
     if (!(ada_cpu.load(trainface)))
     {
@@ -60,28 +59,33 @@ void detection(std::string model, std::string file)
         }
     }
 
-    /////////////////////////////////////////////  
-    //gpu case face detection code  
-    cv::cuda::GpuMat faceBuf_gpu;
-    cv::cuda::GpuMat GpuImg;
+    if (GPU)
+    {
+        /////////////////////////////////////////////  
+        //gpu case face detection code  
+        cv::Ptr<cv::cuda::CascadeClassifier> ada_gpu = cv::cuda::CascadeClassifier::create(model);
 
-    GpuImg.upload(grayImg);
-    start = std::chrono::system_clock::now();
-    ada_gpu->detectMultiScale(GpuImg, faceBuf_gpu);
-    end = std::chrono::system_clock::now();
+        cv::cuda::GpuMat faceBuf_gpu;
+        cv::cuda::GpuMat GpuImg;
 
-    elapsed_seconds = end - start;
-    std::chrono::system_clock::to_time_t(end);
+        GpuImg.upload(grayImg);
+        start = std::chrono::system_clock::now();
+        ada_gpu->detectMultiScale(GpuImg, faceBuf_gpu);
+        end = std::chrono::system_clock::now();
 
-    std::cout << "GPU finished computation at " << std::ctime(&end_time)
-        << "elapsed time: " << elapsed_seconds.count() << "s\n";
-    //printf("detected face(gpu version) =%d / %lf sec take.\n", detectionNumber, TakeTime);
+        elapsed_seconds = end - start;
+        std::chrono::system_clock::to_time_t(end);
 
-//    std::vector<cv::Rect> faces;
-    ada_gpu->convert(faceBuf_gpu, faces);
+        std::cout << "GPU finished computation at " << std::ctime(&end_time)
+            << "elapsed time: " << elapsed_seconds.count() << "s\n";
+        //printf("detected face(gpu version) =%d / %lf sec take.\n", detectionNumber, TakeTime);
 
-    for (int i = 0; i < faces.size(); ++i)
-        cv::rectangle(img, faces[i], cv::Scalar(255));
+        //    std::vector<cv::Rect> faces;
+        ada_gpu->convert(faceBuf_gpu, faces);
+
+        for (int i = 0; i < faces.size(); ++i)
+            cv::rectangle(img, faces[i], cv::Scalar(255));
+    }
 
 
     /////////////////////////////////////////////////  
@@ -285,15 +289,17 @@ void commands(int defaultCommand = -1)
             printf("6: Prototyp vypoctu novych crt.\n");
             printf("7: Vytvorenie bg.txt pre negativne VJ sample.\n");
             printf("8: Vytvorenie info.dat pre negativne VJ sample.\n");
+            printf("9: Test obrazku na natrenovanom modeli pre detekciu tvari. Len CPU.\n");
+            printf("10: Test obrazku na natrenovanom modeli pre detekciu tiel. Len CPU.\n");
             scanf("%d", &defaultCommand);
         }
         switch (defaultCommand)
         {
             case 1:
-                detection("haarcascade_frontalface_alt.xml", "happypeople.jpg");
+                detection("..\\XMLCuda\\haarcascade_frontalface_alt.xml", "..\\inputImages\\happypeople.jpg", true);
                 break;
             case 2:
-                detection("haarcascade_fullbody.xml", "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png");
+                detection("..\\XMLCuda\\haarcascade_fullbody.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", true);
                 break;
             case 3:
             {
@@ -363,6 +369,12 @@ void commands(int defaultCommand = -1)
                 }
                 break;
             }
+            case 9:
+                detection("..\\XMLCPU\\haarcascade_frontalface_default.xml", "..\\inputImages\\happypeople.jpg", false);
+                break;
+            case 10:
+                detection("..\\XMLCPU\\haarcascade_fullbody.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
+                break;
             case 0:
                 break;
         }
@@ -404,7 +416,7 @@ int main(int argc, char* argv[])
     sampleFolders[1] = "D:\\Nenapadny priecinok\\testData\\pos\\";*/
     //sampleFolders[2] = "C:\\GitHubCode\\backfitting\\";
     //   clock_t begin = clock();
- //   std::vector<std::string> filenames;
+    //std::vector<std::string> filenames;
     //Evaluator eval(filenames);
     //eval.trainint(false,"HaarXMLPrezentacia.xml",sampleFolders);
     //eval.detect(false, "HaarXMLPrezentacia.xml",sampleFolders);
@@ -412,7 +424,7 @@ int main(int argc, char* argv[])
     //clock_t end = clock();
     //double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     //printf("Seconds %lf\n", elapsed_secs);
-    commands(6);
+    commands(9);
 
     //std::chrono::time_point<std::chrono::system_clock> start, end;
     //start = std::chrono::system_clock::now();

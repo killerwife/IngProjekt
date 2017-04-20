@@ -308,8 +308,8 @@ void Evaluator::detectMultiScaleTemp(bool exportShit, std::string xml, std::stri
 
 void Evaluator::detectMultiScaleProto(bool exportShit, std::string xml, std::string filename, std::string imageName)
 {
-    cv::Ptr<CV::BoostOwn> boost = cv::Algorithm::load<CV::BoostOwn>(xml);
-    cv::Mat img = cv::imread("C:\\GitHubCode\\anotovanie\\" + imageName);
+    cv::Ptr<CV::BoostOwn> boost = cv::Algorithm::load<CV::BoostOwn>("..\\XML3.0\\" + xml);
+    cv::Mat img = cv::imread("D:\\Anotacie\\03_Kajanek\\" + imageName);
     //cv::Mat img = cv::imread("C:\\GitHubCode\\IngProjekt\\ingProjekt\\ingProjekt\\" + imageName);
     cv::Mat result = img.clone();
     std::vector<cv::Rect> boundingBoxes;
@@ -321,6 +321,7 @@ void Evaluator::detectMultiScaleProto(bool exportShit, std::string xml, std::str
     int shift = 4;
     int m = 32000;
     int scaleCount = 0;
+    long count = 0;
     cv::Mat features(1, transform.GetFeatureCount(), CV_32F);
     for (double scaleFactor = 1;; scaleFactor *= 1.1,scaleCount++)
     {
@@ -341,9 +342,12 @@ void Evaluator::detectMultiScaleProto(bool exportShit, std::string xml, std::str
                 long* responses = (long*)response.data;
                 if (responses[0] == 1)
                     boundingBoxes.push_back(rectangleZone);
+
+                count++;
             }
         }
     }
+    printf("Loop executed %d times.\n",count);
     //auto resultBoundingBoxes = nonMaxSuppression(boundingBoxes, 0.3f, 4);
     for (cv::Rect& box : boundingBoxes)
     {

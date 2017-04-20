@@ -1453,6 +1453,8 @@ bool CascadeClassifierImpl::Data::read(const FileNode &root)
         featureType = FeatureEvaluator::HOG;
         CV_Error(Error::StsNotImplemented, "HOG cascade is not supported in 3.0");
     }
+    else if( featureTypeStr == CC_SHOG)
+        featureType = FeatureEvaluator::SHOG;
     else
         return false;
 
