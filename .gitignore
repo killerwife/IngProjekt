@@ -59,3 +59,5 @@ Temporary Items
 *.opendb
 *.db
 *.suo
+*.iobj
+*.ipdb
