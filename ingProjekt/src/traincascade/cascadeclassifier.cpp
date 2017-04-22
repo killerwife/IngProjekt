@@ -7,7 +7,7 @@ using namespace std;
 using namespace cv;
 
 static const char* stageTypes[] = { CC_BOOST };
-static const char* featureTypes[] = { CC_HAAR, CC_LBP, CC_HOG };
+static const char* featureTypes[] = { CC_HAAR, CC_LBP, CC_HOG, CC_SHOG };
 
 CvCascadeParams::CvCascadeParams() : stageType( defaultStageType ),
     featureType( defaultFeatureType ), winSize( cvSize(24, 24) )

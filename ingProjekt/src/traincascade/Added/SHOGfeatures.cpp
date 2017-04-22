@@ -37,40 +37,41 @@ void SHOGEvaluator::setImage(const cv::Mat & img, uchar clsLabel, int idx)
         }
     }
     cv::Mat imageChannels[8] = {
-        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 0]),
-        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 1]),
-        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 2]),
-        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 3]),
-        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 4]),
-        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 5]),
-        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 6]),
-        cv::Mat(rows, cols, CV_32SC1, &images[rows*cols * 7]),
+        cv::Mat(rows, cols, CV_32FC1, &images[rows*cols * 0]),
+        cv::Mat(rows, cols, CV_32FC1, &images[rows*cols * 1]),
+        cv::Mat(rows, cols, CV_32FC1, &images[rows*cols * 2]),
+        cv::Mat(rows, cols, CV_32FC1, &images[rows*cols * 3]),
+        cv::Mat(rows, cols, CV_32FC1, &images[rows*cols * 4]),
+        cv::Mat(rows, cols, CV_32FC1, &images[rows*cols * 5]),
+        cv::Mat(rows, cols, CV_32FC1, &images[rows*cols * 6]),
+        cv::Mat(rows, cols, CV_32FC1, &images[rows*cols * 7]),
     };
-    int* integral = new int[rows*cols * 8];
+    double* integral = new double[(rows + 1)*(cols + 1) * 8];
     cv::Mat integralChannels[8] = {
-        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 0]),
-        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 1]),
-        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 2]),
-        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 3]),
-        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 4]),
-        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 5]),
-        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 6]),
-        cv::Mat(rows, cols, CV_32SC1, &integral[rows*cols * 7]),
+        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 0]),
+        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 1]),
+        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 2]),
+        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 3]),
+        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 4]),
+        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 5]),
+        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 6]),
+        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 7]),
     };
-    tbb::parallel_for(size_t(0), size_t(7), [&imageChannels, &integralChannels](size_t i) { cv::integral(imageChannels[i], integralChannels[i]); });
+    tbb::parallel_for(size_t(0), size_t(7), [&](size_t i) { cv::integral(imageChannels[i], integralChannels[i]); });
     delete images;
     const int sizeRows = CELL_SIDE, sizeCols = CELL_SIDE;
     const int stepRows = STEP_SIZE, stepCols = STEP_SIZE;
-    histogram.push_back(std::vector<int>(histSize * 8));
-    int* memory = histogram[histogram.size() - 1].data();
+    if (histogram.size() < idx + 1)
+        histogram.push_back(std::vector<int>(histSize * 8));
+    int* memory = histogram[idx].data();
     tbb::parallel_for(size_t(0), size_t(7), [&](size_t l) {
         for (int i = 0; i < rows - sizeRows; i += stepRows)
         {
             for (int k = 0; k < cols - sizeCols; k += stepCols)
             {
                 memory[l*histSize + i / stepRows*(cols - sizeCols) + k / stepCols] =
-                    integral[(l*rows + i)*cols + k] + integral[(l*rows + i + sizeRows)*cols + k + sizeCols]
-                    - integral[(l*rows + i)*cols + k + sizeCols] - integral[(l*rows + i + sizeRows)*cols + k];
+                    long long(integral[(l*(rows + 1) + i)*(cols + 1) + k] + integral[(l*(rows + 1) + i + sizeRows)*(cols + 1) + k + sizeCols]
+                        - integral[(l*(rows + 1) + i)*(cols + 1) + k + sizeCols] - integral[(l*(rows + 1) + i + sizeRows)*(cols + 1) + k]);
             }
         }
     });
@@ -99,6 +100,7 @@ void SHOGEvaluator::generateFeatures()
             }
         }
     }
+    numFeatures = (int)features.size();
 }
 
 CvSHOGFeatureParams::CvSHOGFeatureParams()

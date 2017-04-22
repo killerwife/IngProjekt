@@ -291,6 +291,7 @@ void commands(int defaultCommand = -1)
             printf("8: Vytvorenie info.dat pre negativne VJ sample.\n");
             printf("9: Test obrazku na natrenovanom modeli pre detekciu tvari. Len CPU.\n");
             printf("10: Test obrazku na natrenovanom modeli pre detekciu tiel. Len CPU.\n");
+            printf("11: Test obrazku na vlastnom natrenovanom modeli pre detekciu hracov. Len CPU.\n");
             scanf("%d", &defaultCommand);
         }
         switch (defaultCommand)
@@ -348,6 +349,7 @@ void commands(int defaultCommand = -1)
                 std::string directory;
                 printf("Zadajte meno priecinku: ");
                 std::getline(std::cin, directory);
+                std::getline(std::cin, directory);
                 std::string file("bg.txt");
                 parser.MakeDatFile(directory, file);
                 break;
@@ -357,6 +359,7 @@ void commands(int defaultCommand = -1)
                 Parser parser;
                 std::string directory;
                 printf("Zadajte meno priecinku: ");
+                std::getline(std::cin, directory);
                 std::getline(std::cin, directory);
                 std::vector<std::string> filenames;
                 parser.GetFileNames(directory, filenames);
@@ -374,6 +377,9 @@ void commands(int defaultCommand = -1)
                 break;
             case 10:
                 detection("..\\XMLCPU\\haarcascade_fullbody.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
+                break;
+            case 11:
+                detection("..\\XMLCPU\\cascade.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
                 break;
             case 0:
                 break;
@@ -424,7 +430,7 @@ int main(int argc, char* argv[])
     //clock_t end = clock();
     //double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     //printf("Seconds %lf\n", elapsed_secs);
-    commands(9);
+    commands();
 
     //std::chrono::time_point<std::chrono::system_clock> start, end;
     //start = std::chrono::system_clock::now();
