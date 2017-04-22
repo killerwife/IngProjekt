@@ -9,7 +9,7 @@ Parametrovı -
 init, write, read, printfDefaults, printAttrs, scanAttr (funkcie na èítanie a zapisovanie parametrov)
 + implementácia nastavení
 
-Vıpoèetnı
+Vıpoètovı
 init, writeFeatures, writeFeature, (funkcie na èítanie a zapisovanie stavov)
 operator() - vıpoèet danej hodnoty na danom indexe pre danı obrázok
 setImage - pridanie obrázku a spracovanie - pri haar vlnkách to je vıpoèet integrálneho obrazu a vygenerovanie všetkıch featur (miliony)
@@ -37,6 +37,8 @@ algo
  - algoritmus na nájdenie najväèšieho nálezu - ako flag pre algoritmus
 5. zgrupovanie nálezov
 6. monos zakresli do obrazu obdåniky priamo na gpu
+
+Problémy - pomalé vysekávanie negatívnych samplov, pomalá verifikácia zlepšenia
 
 Nenaprogramované funkcie - GPU
 zgrupovanie hypotez (detekènıch okien) beí na cpu - TODO v kode
