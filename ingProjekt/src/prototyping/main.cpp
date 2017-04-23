@@ -381,6 +381,9 @@ void commands(int defaultCommand = -1)
             case 11:
                 detection("..\\XMLCPU\\cascade.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
                 break;
+            case 12:
+                detection("..\\XMLCPU\\tempSave.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
+                break;
             case 0:
                 break;
         }

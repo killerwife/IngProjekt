@@ -11,7 +11,7 @@ public:
     bool getNeg(cv::Mat &_img) { return negReader.get( _img ); }
     bool getPos(cv::Mat &_img) { return posReader.get( _img ); }
 
-private:
+public:
     class PosReader
     {
     public:

@@ -3,6 +3,9 @@
 #include "cascadeclassifier.h"
 #include <queue>
 
+#include "../detectcascade/cascadedetect.hpp"
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 using namespace std;
 using namespace cv;
 
@@ -321,10 +324,51 @@ bool CvCascadeClassifier::updateTrainingSet( double minimumAcceptanceRatio, doub
     return true;
 }
 
+bool helper(std::vector<std::vector<Rect>>& objects,int& counter,int& picCounter,CvCascadeClassifier* cascade,Mat& img,Size winSize, std::vector<Mat>& pictures)
+{
+    if (picCounter >= objects[counter].size())
+    {
+        counter++;
+        picCounter = 0;
+        if (counter >= objects.size())
+            CV_Error(CV_StsBadArg, "Can not get new negative sample. The most possible reason is "
+                "insufficient count of negative images in given folder using multiscale.\n");
+    }
+    Mat src(pictures[counter], objects[counter][picCounter]);
+    resize(src,img,winSize);
+    picCounter++;
+    return true;
+}
+
 int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositive, double minimumAcceptanceRatio, int64& consumed )
 {
     int getcount = 0;
     Mat img(cascadeParams.winSize, CV_8UC1);
+    std::vector<std::vector<Rect>> objects;
+    std::vector<Mat> loadedImages;
+    int counter = 0;
+    int picCounter = 0;
+    bool isNotFirstStage = stageClassifiers.size() >= 1;
+    bool showImage = false;
+    if (isNotFirstStage && !isPositive)
+    {
+        //std::string temp;
+        //std::getline(std::cin, temp);
+        save("tempSave.xml");
+        cv::CascadeClassifier ada_cpu;
+        ada_cpu.load("tempSave.xml");
+        std::vector<Rect> tempObjects;
+        for (int i = 0; i < imgReader.negReader.imgFilenames.size(); i++)
+        {
+            Mat img = imread(imgReader.negReader.imgFilenames[i], IMREAD_GRAYSCALE);
+            loadedImages.push_back(img);
+            ada_cpu.detectMultiScale(img, tempObjects);
+            objects.push_back(tempObjects);
+            printf("Num of Rects found - %lld for image %s\n",tempObjects.size(), imgReader.negReader.imgFilenames[i].data());
+            tempObjects.clear();
+        }
+        showImage = true;
+    }
     for( int i = first; i < first + count; i++ )
     {
         for( ; ; )
@@ -332,11 +376,18 @@ int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositiv
             if( consumed != 0 && ((double)getcount+1)/(double)(int64)consumed <= minimumAcceptanceRatio )
                 return getcount;
 
-            bool isGetImg = isPositive ? imgReader.getPos( img ) :
+            bool isGetImg = isPositive ? imgReader.getPos( img ) : isNotFirstStage ? helper(objects,counter, picCounter,this,img,cascadeParams.winSize, loadedImages) :
                                            imgReader.getNeg( img );
+            //bool isGetImg = isPositive ? imgReader.getPos(img) : imgReader.getNeg(img);
             if( !isGetImg )
                 return getcount;
             consumed++;
+
+            //if (!isPositive && showImage)
+            //{
+            //    imshow("Showing",img);
+            //    waitKey();
+            //}
 
             featureEvaluator->setImage( img, isPositive ? 1 : 0, i );
             if( predict( i ) == 1 )
