@@ -123,6 +123,8 @@ private:
     CvCascadeImageReader imgReader;
     int numStages, curNumSamples;
     int numPos, numNeg;
+
+    std::vector<cv::Mat> posFiles;
 };
 
 #endif

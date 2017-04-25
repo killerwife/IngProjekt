@@ -24,6 +24,7 @@
     <ClCompile Include="..\src\detectcascade\detection_based_tracker.cpp" />
     <ClCompile Include="..\src\detectcascade\haar.cpp" />
     <ClCompile Include="..\src\detectcascade\hog.cpp" />
+    <ClCompile Include="..\src\prototyping\Parser.cpp" />
     <ClCompile Include="..\src\traincascade\Added\SHOGfeatures.cpp" />
     <ClCompile Include="..\src\traincascade\boost.cpp" />
     <ClCompile Include="..\src\traincascade\cascadeclassifier.cpp" />
@@ -41,6 +42,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\detectcascade\cascadedetect.hpp" />
     <ClInclude Include="..\src\detectcascade\precomp.hpp" />
+    <ClInclude Include="..\src\prototyping\Parser.h" />
     <ClInclude Include="..\src\traincascade\Added\SHOGfeatures.h" />
     <ClInclude Include="..\src\traincascade\boost.h" />
     <ClInclude Include="..\src\traincascade\cascadeclassifier.h" />

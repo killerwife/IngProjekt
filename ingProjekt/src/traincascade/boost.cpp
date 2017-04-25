@@ -32,7 +32,7 @@ using cv::ParallelLoopBody;
 #include <queue>
 #include "opencv/cxmisc.h"
 
-#define HAVE_TBB
+//#define HAVE_TBB
 
 #ifdef HAVE_TBB
 #  include "tbb/tbb.h"
@@ -838,7 +838,7 @@ float CvCascadeBoostTrainData::getVarValue( int vi, int si )
 }
 
 
-struct FeatureIdxOnlyPrecalc : ParallelLoopBody
+struct FeatureIdxOnlyPrecalc
 {
     FeatureIdxOnlyPrecalc( const CvFeatureEvaluator* _featureEvaluator, CvMat* _buf, int _sample_count, bool _is_buf_16u )
     {
@@ -848,11 +848,11 @@ struct FeatureIdxOnlyPrecalc : ParallelLoopBody
         idst = _buf->data.i;
         is_buf_16u = _is_buf_16u;
     }
-    void operator()( const Range& range ) const
+    void operator()( const BlockedRange& range ) const
     {
         cv::AutoBuffer<float> valCache(sample_count);
         float* valCachePtr = (float*)valCache;
-        for ( int fi = range.start; fi < range.end; fi++)
+        for ( int fi = range.begin(); fi < range.end(); fi++)
         {
             for( int si = 0; si < sample_count; si++ )
             {
@@ -875,7 +875,7 @@ struct FeatureIdxOnlyPrecalc : ParallelLoopBody
     bool is_buf_16u;
 };
 
-struct FeatureValAndIdxPrecalc : ParallelLoopBody
+struct FeatureValAndIdxPrecalc
 {
     FeatureValAndIdxPrecalc( const CvFeatureEvaluator* _featureEvaluator, CvMat* _buf, Mat* _valCache, int _sample_count, bool _is_buf_16u )
     {
@@ -886,9 +886,9 @@ struct FeatureValAndIdxPrecalc : ParallelLoopBody
         idst = _buf->data.i;
         is_buf_16u = _is_buf_16u;
     }
-    void operator()( const Range& range ) const
+    void operator()( const BlockedRange& range ) const
     {
-        for ( int fi = range.start; fi < range.end; fi++)
+        for ( int fi = range.begin(); fi < range.end(); fi++)
         {
             for( int si = 0; si < sample_count; si++ )
             {
@@ -912,7 +912,7 @@ struct FeatureValAndIdxPrecalc : ParallelLoopBody
     bool is_buf_16u;
 };
 
-struct FeatureValOnlyPrecalc : ParallelLoopBody
+struct FeatureValOnlyPrecalc
 {
     FeatureValOnlyPrecalc( const CvFeatureEvaluator* _featureEvaluator, Mat* _valCache, int _sample_count )
     {
@@ -920,9 +920,9 @@ struct FeatureValOnlyPrecalc : ParallelLoopBody
         valCache = _valCache;
         sample_count = _sample_count;
     }
-    void operator()( const Range& range ) const
+    void operator()( const BlockedRange& range ) const
     {
-        for ( int fi = range.start; fi < range.end; fi++)
+        for ( int fi = range.begin(); fi < range.end(); fi++)
             for( int si = 0; si < sample_count; si++ )
                 valCache->at<float>(fi,si) = (*featureEvaluator)( fi, si );
     }
@@ -936,11 +936,11 @@ void CvCascadeBoostTrainData::precalculate()
     int minNum = MIN( numPrecalcVal, numPrecalcIdx);
 
     double proctime = -TIME( 0 );
-    parallel_for_( Range(numPrecalcVal, numPrecalcIdx),
+    parallel_for(BlockedRange(numPrecalcVal, numPrecalcIdx),
                    FeatureIdxOnlyPrecalc(featureEvaluator, buf, sample_count, is_buf_16u!=0) );
-    parallel_for_( Range(0, minNum),
+    parallel_for(BlockedRange(0, minNum),
                    FeatureValAndIdxPrecalc(featureEvaluator, buf, &valCache, sample_count, is_buf_16u!=0) );
-    parallel_for_( Range(minNum, numPrecalcVal),
+    parallel_for(BlockedRange(minNum, numPrecalcVal),
                    FeatureValOnlyPrecalc(featureEvaluator, &valCache, sample_count) );
     cout << "Precalculation time: " << (proctime + TIME( 0 )) << endl;
 }

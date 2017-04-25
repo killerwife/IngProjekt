@@ -269,11 +269,295 @@ void rectOnly(std::string imageName)
     fclose(file);
 }
 
+#define PATH_MAX 512
+
+struct ObjectPos
+{
+    float x;
+    float y;
+    float width;
+    bool found;    /* for reference */
+};
+
+void cascadePerformance(int argc, char* argv[])
+{
+    std::string classifierName;
+    char* inputName = (char*)"";
+    float maxSizeDiff = 0.5F;
+    float maxPosDiff = 0.3F;
+    double scaleFactor = 1.25;
+    int minNeighbors = 3;
+    cv::Size minSize;
+    cv::Size maxSize;
+    bool equalize = false;;
+    bool saveDetected = false;
+    FILE* info;
+    cv::CascadeClassifier cascade;
+    double totaltime = 0.0;
+
+    if (argc == 1)
+    {
+        std::cout << "Aplikacia je urcena na vyhodnotenie vykonosti natrenovaneho detektora" << std::endl;
+        std::cout << "Pouzitie: " << std::endl;
+        std::cout << "  -classifier <classifier_directory_name>" << std::endl;
+        std::cout << "  -input <collection_file_name>" << std::endl;
+        std::cout << "  [-maxSizeDiff <max_size_difference = " << maxSizeDiff << ">]" << std::endl;
+        std::cout << "  [-maxPosDiff <max_position_difference = " << maxPosDiff << ">]" << std::endl;
+        std::cout << "  [-sf <scale_factor = " << scaleFactor << ">]" << std::endl;
+        std::cout << "  [-minNeighbors <min_number_neighbors_for_each_candidate = " << minNeighbors << " >]" << std::endl;
+        std::cout << "  [-minSize <min_possible_object_size> Example: 32x32 (Width * Height)]" << std::endl;
+        std::cout << "  [-maxSize <max_possible_object_size> Example: 64x64 (Width * Height)]" << std::endl;
+        std::cout << "  [-equalize <histogram_equalization: " << (equalize ? "True" : "False") << ">]" << std::endl; // ??
+        std::cout << "  [-save <save_detection: " << (saveDetected ? "True" : "False") << ">]" << std::endl;
+        return;
+    }
+
+    for (int i = 1; i < argc; i++)
+    {
+        if (!strcmp(argv[i], "-classifier"))
+        {
+            classifierName = argv[++i];
+        }
+        else if (!strcmp(argv[i], "-input"))
+        {
+            inputName = argv[++i];
+        }
+        else if (!strcmp(argv[i], "-maxSizeDiff"))
+        {
+            float tmp = (float)atof(argv[++i]);
+            if (tmp >= 0 && tmp <= 1)
+                maxSizeDiff = tmp;
+        }
+        else if (!strcmp(argv[i], "-maxPosDiff"))
+        {
+            float tmp = (float)atof(argv[++i]);
+            if (tmp >= 0 && tmp <= 1)
+                maxPosDiff = tmp;
+        }
+        else if (!strcmp(argv[i], "-sf"))
+        {
+            double tmp = atof(argv[++i]);
+            if (tmp > 1)
+                scaleFactor = tmp;
+        }
+        else if (!strcmp(argv[i], "-minNeighbors"))
+        {
+            minNeighbors = atoi(argv[++i]);
+        }
+        else if (!strcmp(argv[i], "-minSize"))
+        {
+            sscanf(argv[++i], "%ux%u", &minSize.width, &minSize.height);
+        }
+        else if (!strcmp(argv[i], "-maxSize"))
+        {
+            sscanf(argv[++i], "%ux%u", &maxSize.width, &maxSize.height);
+        }
+        else if (!strcmp(argv[i], "-equalize"))
+        {
+            equalize = true;
+        }
+        else if (!strcmp(argv[i], "-save"))
+        {
+            saveDetected = true;
+        }
+        else
+            std::cerr << "WARNING: Neznama volba " << argv[i] << std::endl;
+    }
+
+    if (!cascade.load(classifierName))
+    {
+        std::cerr << "ERROR: Nemozem nacitat klasifikator" << std::endl;
+        return;
+    }
+
+    char fullname[PATH_MAX];
+    char detfilename[PATH_MAX];
+    char* filename;
+    char detname[] = "det-";
+
+    // skopiruje do fullname cestu
+    strcpy(fullname, inputName);
+    // do filename vlozi smernik na posledny vyskyt '\\'
+    filename = strrchr(fullname, '\\');
+    if (filename == NULL)
+    {
+        // do filename vlozi smernik na posledny vyskyt znaku '/'
+        filename = strrchr(fullname, '/');
+    }
+    if (filename == NULL)
+    {
+        filename = fullname;
+    }
+    else
+    {
+        filename++;
+    }
+
+    info = fopen(inputName, "r");
+    if (info == NULL)
+    {
+        std::cerr << "ERROR: Nemozem otvorit vstupny subor" << std::endl;
+        return;
+    }
+
+    std::cout << "Parametre: " << std::endl;
+    std::cout << "Classifier: " << classifierName << std::endl;
+    std::cout << "Input: " << inputName << std::endl;
+    std::cout << "maxSizeDiff: " << maxSizeDiff << std::endl;
+    std::cout << "maxPosDiff: " << maxPosDiff << std::endl;
+    std::cout << "sf: " << scaleFactor << std::endl;
+    std::cout << "minNeighbors: " << minNeighbors << std::endl;
+    std::cout << "minSize: " << minSize << std::endl;
+    std::cout << "maxSize: " << maxSize << std::endl;
+    std::cout << "equalize: " << (equalize ? "True" : "False") << std::endl;
+    std::cout << "save: " << (saveDetected ? "True" : "False") << std::endl;
+
+    cv::Mat image, grayImage;
+    int hits, missed, falseAlarms;
+    int totalHits = 0, totalMissed = 0, totalFalseAlarms = 0, totalObjects = 0;
+    int found;
+    int refcount;
+
+    std::cout << "+================================+======+======+======+=======+" << std::endl;
+    std::cout << "|            File Name           | Hits |Missed| False|Objects|" << std::endl;
+    std::cout << "+================================+======+======+======+=======+" << std::endl;
+    while (!feof(info))
+    {
+        if (fscanf(info, "%s %d", filename, &refcount) != 2 || refcount < 0)
+            break;
+
+        image = cv::imread(fullname, cv::IMREAD_COLOR);
+        if (image.empty())
+        {
+            std::cerr << "WARNING: Obrazok sa nepodarilo nacitat: " << fullname << std::endl;
+            continue;
+        }
+
+        // nacitanie suradnic objektov vo vstupnom subore
+        int x, y, w, h;
+        ObjectPos tmp;
+        std::vector<ObjectPos> ref;
+        for (int i = 0; i < refcount; i++)
+        {
+            if (fscanf(info, "%d %d %d %d", &x, &y, &w, &h) != 4)
+            {
+                std::cerr << "ERROR: Nespravny format vstupneho suboru" << std::endl;
+                return;
+            }
+
+            // vypocet stredu obdlznika
+            tmp.x = 0.5F * w + x;
+            tmp.y = 0.5F * h + y;
+            // vypocet priemernej dlzky strany
+            tmp.width = 0.5F * (w + h);
+            tmp.found = false;
+            ref.push_back(tmp);
+
+            if (saveDetected)
+                rectangle(image, cv::Rect(x, y, w, h), CV_RGB(0, 255, 0));
+        }
+
+        // spustenie detekcie na nacitanom obrazku
+        cvtColor(image, grayImage, CV_BGR2GRAY);
+        // ekvalizáciu histogramu ak je zadane -norm
+        if (equalize)
+        {
+            cv::Mat temp;
+            equalizeHist(grayImage, temp);
+            grayImage = temp;
+        }
+
+        std::vector<cv::Rect> objects;
+        totaltime -= (double)cvGetTickCount();
+        cascade.detectMultiScale(grayImage, objects, scaleFactor, minNeighbors, 0, minSize, maxSize);
+        totaltime += (double)cvGetTickCount();
+        hits = missed = falseAlarms = 0;
+
+        ObjectPos det;
+        // meranie vykonosti
+        for (int i = 0; i < objects.size(); i++)
+        {
+            ////PERFORMANCE SCALE
+            //tmpw = objects[i].width / (float) 1.1; // sirka zmensena o 10%
+            //tmph = objects[i].height / (float) 1.1; // vyska zmensena o 10%
+
+            // vypocet stredu obdlznika
+            det.x = 0.5F * objects[i].width + objects[i].x;
+            det.y = 0.5F * objects[i].height + objects[i].y;
+            // vypocet priemernej dlzky strany
+            det.width = 0.5F * (objects[i].width + objects[i].height);
+
+            ////PERFORMANCE SCALE
+            //det.width = sqrtf( 0.5F * (tmpw * tmpw + tmph * tmph));		
+            //// uplatnenie zmensenia aj do vykresleneho bb
+            //objects[i].width = tmpw; // sirka zmensena o 10%
+            //objects[i].height = tmph; // vyska zmensena o 10%
+            //objects[i].x = (objects[i].x + (objects[i].width - tmpw) / (float)2 );
+            //objects[i].y = (objects[i].y + (objects[i].height - tmph) / (float)2 );
+
+            found = 0;
+            for (int j = 0; j < refcount; j++)
+            {
+                float distance = sqrtf((det.x - ref[j].x) * (det.x - ref[j].x) +
+                    (det.y - ref[j].y) * (det.y - ref[j].y));
+
+                if ((distance < ref[j].width * maxPosDiff) &&
+                    (det.width > ref[j].width - ref[j].width * maxSizeDiff) &&
+                    (det.width < ref[j].width + ref[j].width * maxSizeDiff))
+                {
+                    ref[j].found = 1;
+                    found = 1;
+                    if (saveDetected)
+                        rectangle(image, objects[i], CV_RGB(0, 0, 255), 2);
+                }
+            }
+
+            if (!found)
+                falseAlarms++;
+
+            // ulozenie vysledku detekcie ak je zadane -save
+            if (saveDetected && !found)
+                rectangle(image, objects[i], CV_RGB(255, 0, 0));
+        }
+
+        for (int j = 0; j < refcount; j++)
+        {
+            if (ref[j].found)
+                hits++;
+            else
+                missed++;
+        }
+
+        totalHits += hits;
+        totalMissed += missed;
+        totalFalseAlarms += falseAlarms;
+        totalObjects += objects.size();
+        printf("|%32.32s|%6d|%6d|%6d|%7lld|\n", filename, hits, missed, falseAlarms, objects.size());
+        std::cout << "+--------------------------------+------+------+------+-------+" << std::endl;
+        fflush(stdout);
+
+        if (saveDetected)
+        {
+            strcpy(detfilename, detname);
+            strcat(detfilename, filename);
+            strcpy(filename, detfilename);
+            imwrite(fullname, image);
+        }
+    }
+    fclose(info);
+
+    printf("|%32.32s|%6d|%6d|%6d|%7d|\n", "Total", totalHits, totalMissed, totalFalseAlarms, totalObjects);
+    std::cout << "+--------------------------------+------+------+------+-------+" << std::endl;
+    //printf( "Number of stages: %d\n",  );
+    //printf( "Number of weak classifiers: %d\n", );
+    printf("Celkovy cas detekcie: %g ms\n", totaltime / ((double)cvGetTickFrequency()*1000.));
+}
+
 /*
 ocasovat cpu boost a gpu boost, trening a detekcia niekolkych obrazkov
 */
 
-void commands(int defaultCommand = -1)
+void commands(int argc, char* argv[], int defaultCommand = -1)
 {
     while (defaultCommand)
     {
@@ -292,6 +576,8 @@ void commands(int defaultCommand = -1)
             printf("9: Test obrazku na natrenovanom modeli pre detekciu tvari. Len CPU.\n");
             printf("10: Test obrazku na natrenovanom modeli pre detekciu tiel. Len CPU.\n");
             printf("11: Test obrazku na vlastnom natrenovanom modeli pre detekciu hracov. Len CPU.\n");
+            printf("12: Test obrazku na vlastnom neuplne natrenovanom modeli pre detekciu hracov. Len CPU.\n");
+            printf("13: Statistika natrenovaneho modelu voci vstupnym datam.\n");
             scanf("%d", &defaultCommand);
         }
         switch (defaultCommand)
@@ -384,6 +670,9 @@ void commands(int defaultCommand = -1)
             case 12:
                 detection("..\\XMLCPU\\tempSave.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
                 break;
+            case 13:
+                cascadePerformance(argc, argv);
+                break;
             case 0:
                 break;
         }
@@ -433,7 +722,7 @@ int main(int argc, char* argv[])
     //clock_t end = clock();
     //double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     //printf("Seconds %lf\n", elapsed_secs);
-    commands();
+    commands(argc, argv);
 
     //std::chrono::time_point<std::chrono::system_clock> start, end;
     //start = std::chrono::system_clock::now();

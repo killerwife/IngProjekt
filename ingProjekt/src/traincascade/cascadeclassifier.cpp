@@ -6,6 +6,7 @@
 #include "../detectcascade/cascadedetect.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
+#include "../prototyping/Parser.h"
 using namespace std;
 using namespace cv;
 
@@ -143,6 +144,15 @@ bool CvCascadeClassifier::train( const string _cascadeDirName,
                                 bool baseFormatSave,
                                 double acceptanceRatioBreakValue )
 {
+    {
+        Parser parser;
+        std::vector<std::string> filenames;
+        std::string path = "Hraci";
+        parser.GetFileNames(path, filenames);
+        for (std::string filePath : filenames)
+            posFiles.push_back(imread("Hraci\\" + filePath, IMREAD_GRAYSCALE));
+    }
+
     // Start recording clock ticks for training time output
     double time = (double)getTickCount();
 
@@ -340,6 +350,18 @@ bool helper(std::vector<std::vector<Rect>>& objects,int& counter,int& picCounter
     return true;
 }
 
+bool supportsMultiScale(int featureType)
+{
+    switch(featureType)
+    {
+        case CvFeatureParams::HAAR:
+        case CvFeatureParams::LBP:
+            return true;
+        default:
+            return false;
+    }
+}
+
 int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositive, double minimumAcceptanceRatio, int64& consumed )
 {
     int getcount = 0;
@@ -350,7 +372,8 @@ int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositiv
     int picCounter = 0;
     bool isNotFirstStage = stageClassifiers.size() >= 1;
     bool showImage = false;
-    if (isNotFirstStage && !isPositive)
+    bool supportMulti = supportsMultiScale(cascadeParams.featureType);
+    if (isNotFirstStage && !isPositive && supportMulti)
     {
         //std::string temp;
         //std::getline(std::cin, temp);
@@ -362,24 +385,36 @@ int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositiv
         {
             Mat img = imread(imgReader.negReader.imgFilenames[i], IMREAD_GRAYSCALE);
             loadedImages.push_back(img);
-            ada_cpu.detectMultiScale(img, tempObjects);
+            ada_cpu.detectMultiScale(img, tempObjects,1.03,-1);
             objects.push_back(tempObjects);
             printf("Num of Rects found - %lld for image %s\n",tempObjects.size(), imgReader.negReader.imgFilenames[i].data());
             tempObjects.clear();
         }
         showImage = true;
     }
-    for( int i = first; i < first + count; i++ )
+    if (isPositive)
     {
-        for( ; ; )
+        int total = posFiles.size();
+        int positive = 0;
+        for (Mat& posPic : posFiles)
         {
-            if( consumed != 0 && ((double)getcount+1)/(double)(int64)consumed <= minimumAcceptanceRatio )
+            featureEvaluator->setImage(posPic, isPositive ? 1 : 0, first);
+            if (predict(first) == 1)
+                positive++;
+        }
+        printf("Positives total: %d positives accepted by cascade: %d\n",total,positive);
+    }
+    for (int i = first; i < first + count; i++)
+    {
+        for ( ; ; )
+        {
+            if (consumed != 0 && ((double)getcount + 1) / (double)(int64)consumed <= minimumAcceptanceRatio)
                 return getcount;
 
-            bool isGetImg = isPositive ? imgReader.getPos( img ) : isNotFirstStage ? helper(objects,counter, picCounter,this,img,cascadeParams.winSize, loadedImages) :
-                                           imgReader.getNeg( img );
+            bool isGetImg = isPositive ? imgReader.getPos(img) : (isNotFirstStage && supportMulti) ? helper(objects, counter, picCounter, this, img, cascadeParams.winSize, loadedImages) :
+                imgReader.getNeg(img);
             //bool isGetImg = isPositive ? imgReader.getPos(img) : imgReader.getNeg(img);
-            if( !isGetImg )
+            if (!isGetImg)
                 return getcount;
             consumed++;
 

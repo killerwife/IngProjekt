@@ -45,6 +45,7 @@
 
 #include "cascadedetect.hpp"
 #include "opencv2/objdetect/objdetect_c.h"
+#include "Added\SHOGfeatures.h"
 
 namespace cv
 {
@@ -918,7 +919,8 @@ int CascadeClassifierImpl::runAt( Ptr<FeatureEvaluator>& evaluator, Point pt, in
     assert( !oldCascade &&
            (data.featureType == FeatureEvaluator::HAAR ||
             data.featureType == FeatureEvaluator::LBP ||
-            data.featureType == FeatureEvaluator::HOG) );
+            data.featureType == FeatureEvaluator::HOG ||
+            data.featureType == FeatureEvaluator::SHOG) );
 
     if( !evaluator->setWindow(pt, scaleIdx) )
         return -1;
@@ -926,6 +928,8 @@ int CascadeClassifierImpl::runAt( Ptr<FeatureEvaluator>& evaluator, Point pt, in
     {
         if( data.featureType == FeatureEvaluator::HAAR )
             return predictOrderedStump<HaarEvaluator>( *this, evaluator, weight );
+        else if(data.featureType == FeatureEvaluator::SHOG)
+            return predictOrderedStump<SHOGEvaluator>(*this, evaluator, weight );
         else if( data.featureType == FeatureEvaluator::LBP )
             return predictCategoricalStump<LBPEvaluator>( *this, evaluator, weight );
         else
@@ -933,8 +937,10 @@ int CascadeClassifierImpl::runAt( Ptr<FeatureEvaluator>& evaluator, Point pt, in
     }
     else
     {
-        if( data.featureType == FeatureEvaluator::HAAR )
+        if( data.featureType == FeatureEvaluator::HAAR || data.featureType == FeatureEvaluator::SHOG )
             return predictOrdered<HaarEvaluator>( *this, evaluator, weight );
+        else if (data.featureType == FeatureEvaluator::SHOG)
+            return predictOrdered<SHOGEvaluator>(*this, evaluator, weight );
         else if( data.featureType == FeatureEvaluator::LBP )
             return predictCategorical<LBPEvaluator>( *this, evaluator, weight );
         else
@@ -1371,14 +1377,17 @@ void CascadeClassifierImpl::detectMultiScale( InputArray _image, std::vector<Rec
     {
         detectMultiScaleNoGrouping( _image, objects, rejectLevels, levelWeights, scaleFactor, minObjectSize, maxObjectSize,
                                     outputRejectLevels );
-        const double GROUP_EPS = 0.2;
-        if( outputRejectLevels )
+        if (minNeighbors != -1)
         {
-            groupRectangles( objects, rejectLevels, levelWeights, minNeighbors, GROUP_EPS );
-        }
-        else
-        {
-            groupRectangles( objects, minNeighbors, GROUP_EPS );
+            const double GROUP_EPS = 0.2;
+            if (outputRejectLevels)
+            {
+                groupRectangles(objects, rejectLevels, levelWeights, minNeighbors, GROUP_EPS);
+            }
+            else
+            {
+                groupRectangles(objects, minNeighbors, GROUP_EPS);
+            }
         }
     }
 }

@@ -7,7 +7,7 @@
     <Filter Include="Cascade">
       <UniqueIdentifier>{e38734e8-9010-4c88-84db-0ad182839699}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Cascade\Added">
+    <Filter Include="TrainCascade\Added">
       <UniqueIdentifier>{54728811-1302-448c-b7b3-9a31cd16f112}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -49,7 +49,7 @@
       <Filter>TrainCascade</Filter>
     </ClCompile>
     <ClCompile Include="..\src\traincascade\Added\SHOGfeatures.cpp">
-      <Filter>Cascade\Added</Filter>
+      <Filter>TrainCascade\Added</Filter>
     </ClCompile>
     <ClCompile Include="..\src\detectcascade\cascadedetect.cpp">
       <Filter>Cascade</Filter>
@@ -65,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="..\src\detectcascade\hog.cpp">
       <Filter>Cascade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\prototyping\Parser.cpp">
+      <Filter>TrainCascade\Added</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -96,13 +99,16 @@
       <Filter>TrainCascade</Filter>
     </ClInclude>
     <ClInclude Include="..\src\traincascade\Added\SHOGfeatures.h">
-      <Filter>Cascade\Added</Filter>
+      <Filter>TrainCascade\Added</Filter>
     </ClInclude>
     <ClInclude Include="..\src\detectcascade\cascadedetect.hpp">
       <Filter>Cascade</Filter>
     </ClInclude>
     <ClInclude Include="..\src\detectcascade\precomp.hpp">
       <Filter>Cascade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\prototyping\Parser.h">
+      <Filter>TrainCascade\Added</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

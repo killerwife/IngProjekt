@@ -49,6 +49,7 @@ protected:
 
     int histSize;
     int histCols;
+    int histRows;
 };
 
 inline float SHOGEvaluator::operator()(int varIdx, int sampleIdx) const
