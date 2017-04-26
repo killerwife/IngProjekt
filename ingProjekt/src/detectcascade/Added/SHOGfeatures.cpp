@@ -9,6 +9,7 @@ SHOGEvaluator::SHOGEvaluator()
 
 SHOGEvaluator::~SHOGEvaluator()
 {
+    //printf("%d\n", 0);
 }
 
 SHOGEvaluator::Feature::Feature()
@@ -30,13 +31,23 @@ bool SHOGEvaluator::read(const cv::FileNode & node, cv::Size origWinSize)
 {
     if (!FeatureEvaluator::read(node, origWinSize))
         return false;
+    if (!features)
+        features = std::make_shared<std::vector<Feature>>();
+    if (!gradient)
+        gradient = std::make_shared<std::vector<float>>();
+    if (!histogramData)
+        histogramData = std::make_shared<std::vector<std::vector<int>>>();
+    if (!integral)
+        integral = std::make_shared<std::vector<double>>();
+    if (!histogramSizes)
+        histogramSizes = std::make_shared<std::vector<HistData>>();
     size_t i, n = node.size();
     CV_Assert(n > 0);
-    features.resize(n);
+    features->resize(n);
     cv::FileNodeIterator it = node.begin();
     for (i = 0; i < n; i++, ++it)
     {
-        if (!features[i].read(*it))
+        if (!(*features)[i].read(*it))
             return false;
     }
     nchannels = 1;
@@ -45,7 +56,9 @@ bool SHOGEvaluator::read(const cv::FileNode & node, cv::Size origWinSize)
 
 cv::Ptr<cv::FeatureEvaluator> SHOGEvaluator::clone() const
 {
-    return cv::Ptr<cv::FeatureEvaluator>();
+    cv::Ptr<SHOGEvaluator> ret = cv::makePtr<SHOGEvaluator>();
+    *ret = *this;
+    return ret;
 }
 
 bool SHOGEvaluator::setWindow(cv::Point pt, int scaleIdx)
@@ -60,11 +73,14 @@ bool SHOGEvaluator::setWindow(cv::Point pt, int scaleIdx)
     if (curScaleIdx != scaleIdx)
     {
         curScaleIdx = scaleIdx;
-        HistData& data = histogramSizes[curScaleIdx];
+        HistData& data = (*histogramSizes)[curScaleIdx];
         for (int i = 0; i < optfeatures.size(); i++)
-            optfeaturesPtr[i].setOffset(features[i], data.histSize, data.histCols);
+        {
+            optfeatures[i].setOffset((*features)[i], data.histSize, data.histCols);
+            //printf("Feature %d scale ID %d new offset %d\n", i, curScaleIdx, optfeatures[i].offset);
+        }
     }
-    winStart = &histogramData[curScaleIdx][pt.x * histogramSizes[curScaleIdx].histCols + pt.y];
+    winStartOffset = pt.x * (*histogramSizes)[curScaleIdx].histCols + pt.y;
     return true;
 }
 
@@ -85,7 +101,7 @@ void SHOGEvaluator::computeChannels(int i, cv::InputArray img)
     cv::Mat imageMat = img.getMat();
     char* __restrict imageData = (char*)imageMat.data;
     const int cols = imageMat.cols, rows = imageMat.rows;
-    float* gradient = this->gradient.data();
+    float* gradient = this->gradient->data();
     memset(gradient, 0, sizeof(float)*rows*cols * BINS);
     //#pragma loop(hint_parallel(8))
     //#pragma loop(ivdep)
@@ -101,6 +117,20 @@ void SHOGEvaluator::computeChannels(int i, cv::InputArray img)
             gradient[rows*cols*orientation + i*cols + k] = float(absol1 + absol2);
         }
     }
+    //printf("Gradient:\n");
+    //for (int i = 0; i < 8; i++)
+    //{
+    //    printf("Orientation %d:\n",i);
+    //    for (int k = 0; k < rows; k++)
+    //    {
+    //        printf("Row num %2d:", k);
+    //        for (int l = 0; l < cols; l++)
+    //        {
+    //            printf("%4.0f ", gradient[rows*cols*i + k*cols + l]);
+    //        }
+    //        printf("\n");
+    //    }
+    //}
     cv::Mat imageChannels[BINS] = {
         cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 0]),
         cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 1]),
@@ -111,7 +141,7 @@ void SHOGEvaluator::computeChannels(int i, cv::InputArray img)
         cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 6]),
         cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 7]),
     };
-    double* integral = this->integral.data();
+    double* integral = this->integral->data();
     cv::Mat integralChannels[BINS] = {
         cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 0]),
         cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 1]),
@@ -123,10 +153,24 @@ void SHOGEvaluator::computeChannels(int i, cv::InputArray img)
         cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 7]),
     };
     tbb::parallel_for(size_t(0), size_t(7), [&](size_t i) { cv::integral(imageChannels[i], integralChannels[i]); });
+    //printf("Integral Image:\n");
+    //for (int i = 0; i < 8; i++)
+    //{
+    //    printf("Orientation %d:\n", i);
+    //    for (int k = 0; k < rows + 1; k++)
+    //    {
+    //        printf("Row num %2d:", k);
+    //        for (int l = 0; l < cols + 1; l++)
+    //        {
+    //            printf("%4.0lf ", integral[(rows + 1)*(cols + 1)*i + k*(cols + 1) + l]);
+    //        }
+    //        printf("\n");
+    //    }
+    //}
     const int sizeRows = CELL_SIDE, sizeCols = CELL_SIDE;
     const int stepRows = STEP_SIZE, stepCols = STEP_SIZE;
-    HistData& data = histogramSizes[i];
-    int* memory = histogramData[i].data();
+    HistData& data = (*histogramSizes)[i];
+    int* memory = (*histogramData)[i].data();
     tbb::parallel_for(size_t(0), size_t(7), [&](size_t l) {
         for (int i = 0; i < rows - sizeRows; i += stepRows)
         {
@@ -138,18 +182,44 @@ void SHOGEvaluator::computeChannels(int i, cv::InputArray img)
             }
         }
     });
+    //printf("Histogram:\n");
+    //for (int i = 0; i < 8; i++)
+    //{
+    //    printf("Orientation %d:\n", i);
+    //    for (int k = 0; k < data.histRows; k++)
+    //    {
+    //        printf("Row num %2d:", k);
+    //        for (int l = 0; l < data.histCols; l++)
+    //        {
+    //            printf("%4d ", memory[data.histSize*i + k*data.histCols + l]);
+    //        }
+    //        printf("\n");
+    //    }
+    //}
 }
 
 void SHOGEvaluator::computeOptFeatures()
 {
-    optfeatures.resize(features.size());
-    optfeaturesPtr = optfeatures.data();
+    int nscales = scaleData->size();
+    histogramSizes->resize(nscales);
+    histogramData->resize(nscales);
+    for (int i = 0; i < nscales; i++)
+    {
+        const ScaleData& s = getScaleData(i);
+        HistData data;
+        data.histCols = (s.szi.width - 1) / STEP_SIZE - CELL_SIDE;
+        data.histRows = (s.szi.height - 1) / STEP_SIZE - CELL_SIDE;
+        data.histSize = data.histCols * data.histRows;
+        (*histogramSizes)[i] = data;
+        (*histogramData)[i].resize(data.histSize * BINS);
+    }
+    optfeatures.resize(features->size());
     curScaleIdx = 0;
-    HistData& data = histogramSizes[0];
+    HistData& data = (*histogramSizes)[0];
     for (int i = 0; i < optfeatures.size(); i++)
-        optfeaturesPtr[i].setOffset(features[i], data.histSize, data.histCols);
+        optfeatures[i].setOffset((*features)[i], data.histSize, data.histCols);
 
     const ScaleData& s = getScaleData(curScaleIdx);
-    gradient.resize((s.szi.height-1)*(s.szi.width-1));
-    integral.resize(s.szi.height*s.szi.width);
+    gradient->resize((s.szi.width - 1)*(s.szi.height - 1) * BINS);
+    integral->resize(s.szi.width * s.szi.height * BINS);
 }

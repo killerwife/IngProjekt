@@ -90,7 +90,7 @@ void detection(std::string model, std::string file, bool GPU)
 
     /////////////////////////////////////////////////  
     //result display  
-    imshow("origin", img);
+    imwrite("..\\outputImages\\Output.png", img);
     cv::waitKey(0);
 }
 
@@ -578,6 +578,7 @@ void commands(int argc, char* argv[], int defaultCommand = -1)
             printf("11: Test obrazku na vlastnom natrenovanom modeli pre detekciu hracov. Len CPU.\n");
             printf("12: Test obrazku na vlastnom neuplne natrenovanom modeli pre detekciu hracov. Len CPU.\n");
             printf("13: Statistika natrenovaneho modelu voci vstupnym datam.\n");
+            printf("14: Test obrazku na SHOG modeli pre detekciu hracov. Len CPU.\n");
             scanf("%d", &defaultCommand);
         }
         switch (defaultCommand)
@@ -672,6 +673,24 @@ void commands(int argc, char* argv[], int defaultCommand = -1)
                 break;
             case 13:
                 cascadePerformance(argc, argv);
+                break;
+            case 14:
+                detection("..\\XMLCPU\\cascadeSHOG.xml", "..\\inputImages\\20170422135715126.Png", false);
+                break;
+            case 15:
+                detection("..\\XMLCPU\\cascade2.xml", "..\\inputImages\\20170422135715126.Png", false);
+                break;
+            case 16:
+                detection("..\\XMLCPU\\cascade2.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
+                break;
+            case 17:
+                detection("..\\XMLCPU\\cascade2.xml", "..\\inputImages\\20160428114934750.Png", false);
+                break;
+            case 18:
+                detection("..\\XMLCPU\\cascadeSHOG.xml", "..\\inputImages\\20160428114934750.Png", false);
+                break;
+            case 19:
+                detection("..\\XMLCPU\\cascadeSHOG.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
                 break;
             case 0:
                 break;

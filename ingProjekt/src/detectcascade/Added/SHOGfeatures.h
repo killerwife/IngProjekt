@@ -1,5 +1,6 @@
 #pragma once
 #include "../cascadedetect.hpp"
+#include <memory>
 
 #define BINS 8
 #define CELL_SIDE 4
@@ -45,7 +46,7 @@ public:
 
     float operator()(int featureIdx) const
     {
-        return optfeaturesPtr[featureIdx].calc(winStart);
+        return optfeatures[featureIdx].calc(&(*histogramData)[curScaleIdx][winStartOffset]);
     }
     virtual float calcOrd(int featureIdx) const
     {
@@ -56,15 +57,16 @@ protected:
     virtual void computeChannels(int i, cv::InputArray img);
     virtual void computeOptFeatures();
 
-    std::vector<Feature> features;
+    std::shared_ptr<std::vector<Feature>> features;
     std::vector<OptFeature> optfeatures;
 
     OptFeature* optfeaturesPtr;
 
-    std::vector<std::vector<int>> histogramData;
-    std::vector<float> gradient;
-    std::vector<double> integral;
+    std::shared_ptr<std::vector<std::vector<int>>> histogramData;
+    std::shared_ptr<std::vector<float>> gradient;
+    std::shared_ptr<std::vector<double>> integral;
 
+    size_t winStartOffset;
     const int* winStart;
 
     struct HistData
@@ -74,7 +76,7 @@ protected:
         int histRows;
     };
 
-    std::vector<HistData> histogramSizes;
+    std::shared_ptr<std::vector<HistData>> histogramSizes;
 
     int curScaleIdx;
 };

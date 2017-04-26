@@ -872,6 +872,7 @@ Ptr<FeatureEvaluator> FeatureEvaluator::create( int featureType )
 {
     return featureType == HAAR ? Ptr<FeatureEvaluator>(new HaarEvaluator) :
         featureType == LBP ? Ptr<FeatureEvaluator>(new LBPEvaluator) :
+        featureType == SHOG ? Ptr<FeatureEvaluator>(new SHOGEvaluator) :
         Ptr<FeatureEvaluator>();
 }
 
