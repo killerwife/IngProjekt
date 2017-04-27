@@ -45,7 +45,9 @@
 
 #include "cascadedetect.hpp"
 #include "opencv2/objdetect/objdetect_c.h"
-#include "Added\SHOGfeatures.h"
+#include "../detectcascade/Added/SHOGfeatures.h"
+
+using namespace detect;
 
 namespace cv
 {

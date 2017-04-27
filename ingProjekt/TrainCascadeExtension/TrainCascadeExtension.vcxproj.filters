@@ -10,6 +10,9 @@
     <Filter Include="TrainCascade\Added">
       <UniqueIdentifier>{54728811-1302-448c-b7b3-9a31cd16f112}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cascade\Added">
+      <UniqueIdentifier>{07fc29b1-21a2-4f98-a7b9-e683e349f2a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\traincascade\boost.cpp">
@@ -48,9 +51,6 @@
     <ClCompile Include="..\src\traincascade\traincascade.cpp">
       <Filter>TrainCascade</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\traincascade\Added\SHOGfeatures.cpp">
-      <Filter>TrainCascade\Added</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\detectcascade\cascadedetect.cpp">
       <Filter>Cascade</Filter>
     </ClCompile>
@@ -67,6 +67,15 @@
       <Filter>Cascade</Filter>
     </ClCompile>
     <ClCompile Include="..\src\prototyping\Parser.cpp">
+      <Filter>TrainCascade\Added</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SharedDefines\SharedDefines.cpp">
+      <Filter>TrainCascade\Added</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\detectcascade\Added\SHOGfeatures.cpp">
+      <Filter>Cascade\Added</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\traincascade\Added\SHOGfeaturesTrain.cpp">
       <Filter>TrainCascade\Added</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,9 +107,6 @@
     <ClInclude Include="..\src\traincascade\traincascade_features.h">
       <Filter>TrainCascade</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\traincascade\Added\SHOGfeatures.h">
-      <Filter>TrainCascade\Added</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\detectcascade\cascadedetect.hpp">
       <Filter>Cascade</Filter>
     </ClInclude>
@@ -108,6 +114,15 @@
       <Filter>Cascade</Filter>
     </ClInclude>
     <ClInclude Include="..\src\prototyping\Parser.h">
+      <Filter>TrainCascade\Added</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SharedDefines\SharedDefines.h">
+      <Filter>TrainCascade\Added</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\detectcascade\Added\SHOGfeatures.h">
+      <Filter>Cascade\Added</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\traincascade\Added\SHOGfeaturesTrain.h">
       <Filter>TrainCascade\Added</Filter>
     </ClInclude>
   </ItemGroup>

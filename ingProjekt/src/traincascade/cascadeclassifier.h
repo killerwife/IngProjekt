@@ -6,7 +6,7 @@
 #include "haarfeatures.h"
 #include "lbpfeatures.h"
 #include "HOGfeatures.h" //new
-#include "Added/SHOGfeatures.h" // custom DP
+#include "Added/SHOGfeaturesTrain.h" // custom DP
 #include "boost.h"
 
 #define CC_CASCADE_FILENAME "cascade.xml"

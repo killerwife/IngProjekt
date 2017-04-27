@@ -2,6 +2,9 @@
 #include "opencv2/core.hpp"
 #include <tbb/tbb.h>
 #include <opencv2/imgproc.hpp>
+#include "../../SharedDefines/SharedDefines.h"
+
+using namespace detect;
 
 SHOGEvaluator::SHOGEvaluator()
 {
@@ -80,7 +83,7 @@ bool SHOGEvaluator::setWindow(cv::Point pt, int scaleIdx)
             //printf("Feature %d scale ID %d new offset %d\n", i, curScaleIdx, optfeatures[i].offset);
         }
     }
-    winStartOffset = pt.x * (*histogramSizes)[curScaleIdx].histCols + pt.y;
+    winStartOffset = pt.y * (*histogramSizes)[curScaleIdx].histCols + pt.x;
     return true;
 }
 
@@ -99,103 +102,7 @@ int SHOGEvaluator::getSquaresOffset() const
 void SHOGEvaluator::computeChannels(int i, cv::InputArray img)
 {
     cv::Mat imageMat = img.getMat();
-    char* __restrict imageData = (char*)imageMat.data;
-    const int cols = imageMat.cols, rows = imageMat.rows;
-    float* gradient = this->gradient->data();
-    memset(gradient, 0, sizeof(float)*rows*cols * BINS);
-    //#pragma loop(hint_parallel(8))
-    //#pragma loop(ivdep)
-    for (long i = 1; i < rows - 1; i++)
-    {
-        for (long k = 1; k < cols - 1; k++)
-        {
-            int dx = -imageData[i*cols + k - 1] + imageData[i*cols + k + 1];
-            int dy = -imageData[(i - 1)*cols + k] + imageData[(i + 1)*cols + k];
-            int absol1 = std::abs(dy);
-            int absol2 = std::abs(dx);
-            int orientation = (dy < 0) * 4 + (dx < 0) * 2 + (absol1 > absol2) * 1;
-            gradient[rows*cols*orientation + i*cols + k] = float(absol1 + absol2);
-        }
-    }
-    //printf("Gradient:\n");
-    //for (int i = 0; i < 8; i++)
-    //{
-    //    printf("Orientation %d:\n",i);
-    //    for (int k = 0; k < rows; k++)
-    //    {
-    //        printf("Row num %2d:", k);
-    //        for (int l = 0; l < cols; l++)
-    //        {
-    //            printf("%4.0f ", gradient[rows*cols*i + k*cols + l]);
-    //        }
-    //        printf("\n");
-    //    }
-    //}
-    cv::Mat imageChannels[BINS] = {
-        cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 0]),
-        cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 1]),
-        cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 2]),
-        cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 3]),
-        cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 4]),
-        cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 5]),
-        cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 6]),
-        cv::Mat(rows, cols, CV_32FC1, &gradient[rows*cols * 7]),
-    };
-    double* integral = this->integral->data();
-    cv::Mat integralChannels[BINS] = {
-        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 0]),
-        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 1]),
-        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 2]),
-        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 3]),
-        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 4]),
-        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 5]),
-        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 6]),
-        cv::Mat(rows + 1, cols + 1, CV_64F, &integral[(rows + 1)*(cols + 1) * 7]),
-    };
-    tbb::parallel_for(size_t(0), size_t(7), [&](size_t i) { cv::integral(imageChannels[i], integralChannels[i]); });
-    //printf("Integral Image:\n");
-    //for (int i = 0; i < 8; i++)
-    //{
-    //    printf("Orientation %d:\n", i);
-    //    for (int k = 0; k < rows + 1; k++)
-    //    {
-    //        printf("Row num %2d:", k);
-    //        for (int l = 0; l < cols + 1; l++)
-    //        {
-    //            printf("%4.0lf ", integral[(rows + 1)*(cols + 1)*i + k*(cols + 1) + l]);
-    //        }
-    //        printf("\n");
-    //    }
-    //}
-    const int sizeRows = CELL_SIDE, sizeCols = CELL_SIDE;
-    const int stepRows = STEP_SIZE, stepCols = STEP_SIZE;
-    HistData& data = (*histogramSizes)[i];
-    int* memory = (*histogramData)[i].data();
-    tbb::parallel_for(size_t(0), size_t(7), [&](size_t l) {
-        for (int i = 0; i < rows - sizeRows; i += stepRows)
-        {
-            for (int k = 0; k < cols - sizeCols; k += stepCols)
-            {
-                memory[l*data.histSize + i / stepRows*(cols - sizeCols) + k / stepCols] =
-                    int(integral[(l*(rows + 1) + i)*(cols + 1) + k] + integral[(l*(rows + 1) + i + sizeRows)*(cols + 1) + k + sizeCols]
-                        - integral[(l*(rows + 1) + i)*(cols + 1) + k + sizeCols] - integral[(l*(rows + 1) + i + sizeRows)*(cols + 1) + k]);
-            }
-        }
-    });
-    //printf("Histogram:\n");
-    //for (int i = 0; i < 8; i++)
-    //{
-    //    printf("Orientation %d:\n", i);
-    //    for (int k = 0; k < data.histRows; k++)
-    //    {
-    //        printf("Row num %2d:", k);
-    //        for (int l = 0; l < data.histCols; l++)
-    //        {
-    //            printf("%4d ", memory[data.histSize*i + k*data.histCols + l]);
-    //        }
-    //        printf("\n");
-    //    }
-    //}
+    ComputeSHOG(imageMat, this->gradient->data(), this->integral->data(), (*histogramData)[i].data(), BINS, cv::Size(STEP_SIZE, STEP_SIZE), cv::Size(CELL_SIDE, CELL_SIDE));
 }
 
 void SHOGEvaluator::computeOptFeatures()

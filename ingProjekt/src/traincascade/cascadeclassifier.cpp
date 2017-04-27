@@ -341,8 +341,9 @@ bool helper(std::vector<std::vector<Rect>>& objects,int& counter,int& picCounter
         counter++;
         picCounter = 0;
         if (counter >= objects.size())
-            CV_Error(CV_StsBadArg, "Can not get new negative sample. The most possible reason is "
-                "insufficient count of negative images in given folder using multiscale.\n");
+            return false;
+            /*CV_Error(CV_StsBadArg, "Can not get new negative sample. The most possible reason is "
+                "insufficient count of negative images in given folder using multiscale.\n");*/
     }
     Mat src(pictures[counter], objects[counter][picCounter]);
     resize(src,img,winSize);
@@ -356,6 +357,7 @@ bool supportsMultiScale(int featureType)
     {
         case CvFeatureParams::HAAR:
         case CvFeatureParams::LBP:
+        case CvFeatureParams::SHOG:
             return true;
         default:
             return false;
@@ -373,6 +375,7 @@ int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositiv
     bool isNotFirstStage = stageClassifiers.size() >= 1;
     bool showImage = false;
     bool supportMulti = supportsMultiScale(cascadeParams.featureType);
+    bool ranOutOfNeg = false;
     if (isNotFirstStage && !isPositive && supportMulti)
     {
         //std::string temp;
@@ -396,6 +399,8 @@ int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositiv
     {
         int total = posFiles.size();
         int positive = 0;
+        long long variable = 0;
+
         for (Mat& posPic : posFiles)
         {
             featureEvaluator->setImage(posPic, isPositive ? 1 : 0, first);
@@ -411,8 +416,23 @@ int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositiv
             if (consumed != 0 && ((double)getcount + 1) / (double)(int64)consumed <= minimumAcceptanceRatio)
                 return getcount;
 
-            bool isGetImg = isPositive ? imgReader.getPos(img) : (isNotFirstStage && supportMulti) ? helper(objects, counter, picCounter, this, img, cascadeParams.winSize, loadedImages) :
-                imgReader.getNeg(img);
+            bool isGetImg = false;
+            if (isPositive)
+                isGetImg = imgReader.getPos(img);
+            else
+            {
+                if (isNotFirstStage && supportMulti && !ranOutOfNeg)
+                {
+                    if (!helper(objects, counter, picCounter, this, img, cascadeParams.winSize, loadedImages))
+                        ranOutOfNeg = true;
+                    else
+                        isGetImg = true;
+                }
+
+                if(!isGetImg)
+                    isGetImg = imgReader.getNeg(img);
+            }
+
             //bool isGetImg = isPositive ? imgReader.getPos(img) : imgReader.getNeg(img);
             if (!isGetImg)
                 return getcount;

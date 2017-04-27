@@ -3,6 +3,7 @@
 
 using namespace std;
 using namespace cv;
+using namespace train;
 
 int main( int argc, char* argv[] )
 {

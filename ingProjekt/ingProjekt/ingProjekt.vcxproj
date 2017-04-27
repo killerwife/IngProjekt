@@ -170,6 +170,7 @@
     <ClCompile Include="..\src\prototyping\HaarTransform.cpp" />
     <ClCompile Include="..\src\prototyping\main.cpp" />
     <ClCompile Include="..\src\prototyping\Parser.cpp" />
+    <ClCompile Include="..\src\SharedDefines\SharedDefines.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\boost3.0\boost.h" />

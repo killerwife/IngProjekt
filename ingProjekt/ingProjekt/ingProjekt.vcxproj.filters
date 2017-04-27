@@ -66,6 +66,9 @@
     <ClCompile Include="..\src\detectcascade\Added\SHOGfeatures.cpp">
       <Filter>DetectCascade\Added</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\SharedDefines\SharedDefines.cpp">
+      <Filter>SharedDefines</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\detectcascade\cascadedetect.hpp">

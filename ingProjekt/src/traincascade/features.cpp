@@ -5,6 +5,7 @@
 
 using namespace std;
 using namespace cv;
+using namespace train;
 
 float calcNormFactor( const Mat& sum, const Mat& sqSum )
 {
