@@ -940,7 +940,7 @@ int CascadeClassifierImpl::runAt( Ptr<FeatureEvaluator>& evaluator, Point pt, in
     }
     else
     {
-        if( data.featureType == FeatureEvaluator::HAAR || data.featureType == FeatureEvaluator::SHOG )
+        if( data.featureType == FeatureEvaluator::HAAR )
             return predictOrdered<HaarEvaluator>( *this, evaluator, weight );
         else if (data.featureType == FeatureEvaluator::SHOG)
             return predictOrdered<SHOGEvaluator>(*this, evaluator, weight );
