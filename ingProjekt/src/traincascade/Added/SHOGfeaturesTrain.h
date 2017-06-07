@@ -8,6 +8,7 @@
 #define STEP_SIZE 1
 #define S_HOG "shog"
 
+/*Training interface implementation*/
 namespace train
 {
     class CvSHOGFeatureParams : public CvFeatureParams

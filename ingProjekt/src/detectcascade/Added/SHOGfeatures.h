@@ -2,6 +2,7 @@
 #include "../cascadedetect.hpp"
 #include <memory>
 
+/*Detection interface implementation*/
 namespace detect
 {
 #define BINS 8

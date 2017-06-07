@@ -98,13 +98,14 @@ public:
                 const CvFeatureParams& _featureParams,
                 const CvCascadeBoostParams& _stageParams,
                 bool baseFormatSave = false,
-                double acceptanceRatioBreakValue = -1.0 );
+                double acceptanceRatioBreakValue = -1.0,
+                bool fallbackToSlowNegSamples = false);
 private:
     int predict( int sampleIdx );
     void save( const std::string cascadeDirName, bool baseFormat = false );
     bool load( const std::string cascadeDirName );
-    bool updateTrainingSet( double minimumAcceptanceRatio, double& acceptanceRatio );
-    int fillPassedSamples( int first, int count, bool isPositive, double requiredAcceptanceRatio, int64& consumed );
+    bool updateTrainingSet( double minimumAcceptanceRatio, double& acceptanceRatio, bool fallbackToSlowNegSamples);
+    int fillPassedSamples( int first, int count, bool isPositive, double requiredAcceptanceRatio, int64& consumed, bool fallbackToSlowNegSamples);
 
     void writeParams( cv::FileStorage &fs ) const;
     void writeStages( cv::FileStorage &fs, const cv::Mat& featureMap ) const;

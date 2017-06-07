@@ -16,6 +16,7 @@ int main( int argc, char* argv[] )
     int precalcValBufSize = 1024,
         precalcIdxBufSize = 1024;
     bool baseFormatSave = false;
+    bool fallbackToSlowNegSamples = false;
     double acceptanceRatioBreakValue = -1.0;
 
     CvCascadeParams cascadeParams;
@@ -40,6 +41,7 @@ int main( int argc, char* argv[] )
         cout << "  [-baseFormatSave]" << endl;
         cout << "  [-numThreads <max_number_of_threads = " << numThreads << ">]" << endl;
         cout << "  [-acceptanceRatioBreakValue <value> = " << acceptanceRatioBreakValue << ">]" << endl;
+        cout << "  [-fallbackToSlowNegSamples]" << endl;
         cascadeParams.printDefaults();
         stageParams.printDefaults();
         for( int fi = 0; fi < fc; fi++ )
@@ -94,6 +96,10 @@ int main( int argc, char* argv[] )
         {
           acceptanceRatioBreakValue = atof(argv[++i]);
         }
+        else if (!strcmp(argv[i], "-fallbackToSlowNegSamples"))
+        {
+            fallbackToSlowNegSamples = true;
+        }
         else if ( cascadeParams.scanAttr( argv[i], argv[i+1] ) ) { i++; }
         else if ( stageParams.scanAttr( argv[i], argv[i+1] ) ) { i++; }
         else if ( !set )
@@ -121,6 +127,7 @@ int main( int argc, char* argv[] )
                       *featureParams[cascadeParams.featureType],
                       stageParams,
                       baseFormatSave,
-                      acceptanceRatioBreakValue );
+                      acceptanceRatioBreakValue,
+                      fallbackToSlowNegSamples);
     return 0;
 }

@@ -6,7 +6,7 @@
 
 using namespace CV;
 
-void detection(std::string model, std::string file, bool GPU)
+void detection(std::string model, std::string file, bool GPU, bool save = false)
 {
     //window  
     //cv::namedWindow("origin");
@@ -90,8 +90,13 @@ void detection(std::string model, std::string file, bool GPU)
 
     /////////////////////////////////////////////////  
     //result display  
-    imwrite("..\\outputImages\\Output.png", img);
-    cv::waitKey(0);
+    if (save)
+        imwrite("..\\outputImages\\Output.png", img);
+    else
+    {
+        cv::imshow("Output", img);
+        cv::waitKey(0);
+    }
 }
 
 static cv::Ptr<cv::ml::TrainData>
@@ -295,7 +300,7 @@ void cascadePerformance(int argc, char* argv[])
     cv::CascadeClassifier cascade;
     double totaltime = 0.0;
 
-    if (argc == 1)
+    if (argc == 2)
     {
         std::cout << "Aplikacia je urcena na vyhodnotenie vykonosti natrenovaneho detektora" << std::endl;
         std::cout << "Pouzitie: " << std::endl;
@@ -312,7 +317,7 @@ void cascadePerformance(int argc, char* argv[])
         return;
     }
 
-    for (int i = 1; i < argc; i++)
+    for (int i = 2; i < argc; i++)
     {
         if (!strcmp(argv[i], "-classifier"))
         {
@@ -553,149 +558,185 @@ void cascadePerformance(int argc, char* argv[])
     printf("Celkovy cas detekcie: %g ms\n", totaltime / ((double)cvGetTickFrequency()*1000.));
 }
 
+void detectImage(int argc, char* argv[])
+{
+    std::string model = "cascade.xml";
+    std::string inputImage = "SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png";
+    bool gpu = false;
+    bool save = false;
+    if (argc == 2)
+    {
+        std::cout << "Vizualizacia detekcie" << std::endl;
+        std::cout << "Pouzitie: " << std::endl;
+        std::cout << "  -classifier <classifier_file_path> - vstupny natrenovany klasifikator" << std::endl;
+        std::cout << "  -input <image_file_path> - vstupny obrazok" << std::endl;
+        std::cout << "  [-gpu] - model pre GPU aj CPU" << std::endl;
+        std::cout << "  [-save] - ulozit na disk, inak zobrazit na obrazovku" << std::endl;
+    }
+    for (int i = 2; i < argc; i++)
+    {
+        if (!strcmp(argv[i], "-classifier"))
+        {
+            model = argv[++i];
+        }
+        else if (!strcmp(argv[i], "-input"))
+        {
+            inputImage = argv[++i];
+        }
+        else if (!strcmp(argv[i], "-gpu"))
+        {
+            gpu = true;
+        }
+        else if (!strcmp(argv[i], "-save"))
+        {
+            save = true;
+        }
+    }
+    detection(model, inputImage, gpu, save);
+}
+
 /*
 ocasovat cpu boost a gpu boost, trening a detekcia niekolkych obrazkov
 */
 
 void commands(int argc, char* argv[], int defaultCommand = -1)
 {
-    while (defaultCommand)
+    if (defaultCommand == -1 && argc == 1)
     {
-        if (defaultCommand == -1)
+        printf("Vyberte moznost:\n");
+        printf("0: Koniec.\n");
+        printf("1: Test obrazku na natrenovanom modeli pre detekciu tvari.\n");
+        printf("2: Test obrazku na natrenovanom modeli pre detekciu tiel.\n");
+        printf("3: Trening modelu na pribalenych datach.\n");
+        printf("4: Benchmark natrenovaneho modelu.\n");
+        printf("5: Test natrenovaneho modelu na jednom obrazku.\n");
+        printf("6: Prototyp vypoctu novych crt.\n");
+        printf("7: Vytvorenie bg.txt pre negativne VJ sample.\n");
+        printf("8: Vytvorenie info.dat pre negativne VJ sample.\n");
+        printf("9: Test obrazku na natrenovanom modeli pre detekciu tvari. Len CPU.\n");
+        printf("10: Test obrazku na natrenovanom modeli pre detekciu tiel. Len CPU.\n");
+        printf("11: Test obrazku na vlastnom natrenovanom modeli pre detekciu hracov. Len CPU.\n");
+        printf("12: Test obrazku na vlastnom neuplne natrenovanom modeli pre detekciu hracov. Len CPU.\n");
+        printf("13: Statistika natrenovaneho modelu voci vstupnym datam. Len cez prikazovy riadok.\n");
+        printf("14: Test obrazku na SHOG modeli pre detekciu hracov. Len CPU.\n");
+        printf("15-19: Test obrazku na roznych modeloch. Len CPU.\n");
+        printf("20: Test obrazku cez prikazovy riadok na zadanom obrazku a modeli.\n");
+    }
+    else if (argc > 1)
+        defaultCommand = std::atoi(argv[1]);
+    switch (defaultCommand)
+    {
+        case 1:
+            detection("..\\XMLCuda\\haarcascade_frontalface_alt.xml", "..\\inputImages\\happypeople.jpg", true);
+            break;
+        case 2:
+            detection("..\\XMLCuda\\haarcascade_fullbody.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", true);
+            break;
+        case 3:
         {
-            printf("Vyberte moznost:\n");
-            printf("0: Koniec.\n");
-            printf("1: Test obrazku na natrenovanom modeli pre detekciu tvari.\n");
-            printf("2: Test obrazku na natrenovanom modeli pre detekciu tiel.\n");
-            printf("3: Trening modelu na pribalenych datach.\n");
-            printf("4: Benchmark natrenovaneho modelu.\n");
-            printf("5: Test natrenovaneho modelu na jednom obrazku.\n");
-            printf("6: Prototyp vypoctu novych crt.\n");
-            printf("7: Vytvorenie bg.txt pre negativne VJ sample.\n");
-            printf("8: Vytvorenie info.dat pre negativne VJ sample.\n");
-            printf("9: Test obrazku na natrenovanom modeli pre detekciu tvari. Len CPU.\n");
-            printf("10: Test obrazku na natrenovanom modeli pre detekciu tiel. Len CPU.\n");
-            printf("11: Test obrazku na vlastnom natrenovanom modeli pre detekciu hracov. Len CPU.\n");
-            printf("12: Test obrazku na vlastnom neuplne natrenovanom modeli pre detekciu hracov. Len CPU.\n");
-            printf("13: Statistika natrenovaneho modelu voci vstupnym datam.\n");
-            printf("14: Test obrazku na SHOG modeli pre detekciu hracov. Len CPU.\n");
-            scanf("%d", &defaultCommand);
+            std::string sampleFolders[3];
+            sampleFolders[0] = "trenovacieData\\pos\\";
+            sampleFolders[1] = "trenovacieData\\neg\\";
+            sampleFolders[2] = "backfitting\\";
+            std::vector<std::string> filenames;
+            Evaluator eval(filenames);
+            eval.trainint(false, "HaarXMLSemestralnaPraca.xml", sampleFolders);
+            break;
         }
-        switch (defaultCommand)
+        case 4:
         {
-            case 1:
-                detection("..\\XMLCuda\\haarcascade_frontalface_alt.xml", "..\\inputImages\\happypeople.jpg", true);
-                break;
-            case 2:
-                detection("..\\XMLCuda\\haarcascade_fullbody.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", true);
-                break;
-            case 3:
-            {
-                std::string sampleFolders[3];
-                sampleFolders[0] = "trenovacieData\\pos\\";
-                sampleFolders[1] = "trenovacieData\\neg\\";
-                sampleFolders[2] = "backfitting\\";
-                std::vector<std::string> filenames;
-                Evaluator eval(filenames);
-                eval.trainint(false, "HaarXMLSemestralnaPraca.xml", sampleFolders);
-                break;
-            }
-            case 4:
-            {
-                std::string sampleFolders[3];
-                sampleFolders[0] = "testovacieData\\pos\\";
-                sampleFolders[1] = "testovacieData\\neg\\";
-                sampleFolders[2] = "backfitting\\";
-                std::vector<std::string> filenames;
-                Evaluator eval(filenames);
-                eval.detect(false, "HaarXMLSemestralnaPraca.xml", sampleFolders);
-                break;
-            }
-            case 5:
-            {
-                std::string pic = "20160428114934750.Png";
-                printf("Zadajte meno obrazku: Default: 20160428114934750.Png\n");
-                std::string line;
-                std::getline(std::cin, line);
-                std::getline(std::cin, line);
-                if (line[0] != '\n' && line[0] != '\0')
-                    pic = line;
-                std::vector<std::string> filenames;
-                Evaluator eval(filenames);
-                eval.detectMultiScaleTemp(false, "HaarXMLSemestralnaPraca.xml", "", pic);
-                break;
-            }
-            case 6:
-            {
-                FeaturePrototypes::test();
-                break;
-            }
-            case 7:
-            {
-                Parser parser;
-                std::string directory;
-                printf("Zadajte meno priecinku: ");
-                std::getline(std::cin, directory);
-                std::getline(std::cin, directory);
-                std::string file("bg.txt");
-                parser.MakeDatFile(directory, file);
-                break;
-            }
-            case 8:
-            {
-                Parser parser;
-                std::string directory;
-                printf("Zadajte meno priecinku: ");
-                std::getline(std::cin, directory);
-                std::getline(std::cin, directory);
-                std::vector<std::string> filenames;
-                parser.GetFileNames(directory, filenames);
-                std::ofstream outputFile;
-                outputFile.open(("info.dat"));
-                for (std::string& filename : filenames)
-                {
-                    cv::Mat image = cv::imread((directory + "\\" + filename).data(), CV_LOAD_IMAGE_GRAYSCALE);
-                    outputFile << directory << "/" << filename << " 1 0 0 " << std::to_string(image.cols) << " " << std::to_string(image.rows) << std::endl;
-                }
-                break;
-            }
-            case 9:
-                detection("..\\XMLCPU\\haarcascade_frontalface_default.xml", "..\\inputImages\\happypeople.jpg", false);
-                break;
-            case 10:
-                detection("..\\XMLCPU\\haarcascade_fullbody.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
-                break;
-            case 11:
-                detection("..\\XMLCPU\\cascade.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
-                break;
-            case 12:
-                detection("..\\XMLCPU\\tempSave.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
-                break;
-            case 13:
-                cascadePerformance(argc, argv);
-                break;
-            case 14:
-                detection("..\\XMLCPU\\cascadeSHOG.xml", "..\\inputImages\\20170422135715126.Png", false);
-                break;
-            case 15:
-                detection("..\\XMLCPU\\cascade2.xml", "..\\inputImages\\20170422135715126.Png", false);
-                break;
-            case 16:
-                detection("..\\XMLCPU\\cascade2.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
-                break;
-            case 17:
-                detection("..\\XMLCPU\\cascade2.xml", "..\\inputImages\\20160428114934750.Png", false);
-                break;
-            case 18:
-                detection("..\\XMLCPU\\cascadeSHOG.xml", "..\\inputImages\\20160428114934750.Png", false);
-                break;
-            case 19:
-                detection("..\\XMLCPU\\cascadeSHOG.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
-                break;
-            case 0:
-                break;
+            std::string sampleFolders[3];
+            sampleFolders[0] = "testovacieData\\pos\\";
+            sampleFolders[1] = "testovacieData\\neg\\";
+            sampleFolders[2] = "backfitting\\";
+            std::vector<std::string> filenames;
+            Evaluator eval(filenames);
+            eval.detect(false, "HaarXMLSemestralnaPraca.xml", sampleFolders);
+            break;
         }
-        defaultCommand = -1;
+        case 5:
+        {
+            std::string pic = "20160428114934750.Png";
+            printf("Zadajte meno obrazku: Default: 20160428114934750.Png\n");
+            std::string line;
+            std::getline(std::cin, line);
+            std::getline(std::cin, line);
+            if (line[0] != '\n' && line[0] != '\0')
+                pic = line;
+            std::vector<std::string> filenames;
+            Evaluator eval(filenames);
+            eval.detectMultiScaleTemp(false, "HaarXMLSemestralnaPraca.xml", "", pic);
+            break;
+        }
+        case 6:
+        {
+            FeaturePrototypes::test();
+            break;
+        }
+        case 7:
+        {
+            Parser parser;
+            std::string directory;
+            printf("Zadajte meno priecinku: ");
+            std::getline(std::cin, directory);
+            std::getline(std::cin, directory);
+            std::string file("bg.txt");
+            parser.MakeDatFile(directory, file);
+            break;
+        }
+        case 8:
+        {
+            Parser parser;
+            std::string directory;
+            printf("Zadajte meno priecinku: ");
+            std::getline(std::cin, directory);
+            std::getline(std::cin, directory);
+            std::vector<std::string> filenames;
+            parser.GetFileNames(directory, filenames);
+            std::ofstream outputFile;
+            outputFile.open(("info.dat"));
+            for (std::string& filename : filenames)
+            {
+                cv::Mat image = cv::imread((directory + "\\" + filename).data(), CV_LOAD_IMAGE_GRAYSCALE);
+                outputFile << directory << "/" << filename << " 1 0 0 " << std::to_string(image.cols) << " " << std::to_string(image.rows) << std::endl;
+            }
+            break;
+        }
+        case 9:
+            detection("..\\XMLCPU\\haarcascade_frontalface_default.xml", "..\\inputImages\\happypeople.jpg", false);
+            break;
+        case 10:
+            detection("..\\XMLCPU\\haarcascade_fullbody.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
+            break;
+        case 11:
+            detection("..\\XMLCPU\\cascade.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
+            break;
+        case 12:
+            detection("..\\XMLCPU\\tempSave.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
+            break;
+        case 13:
+            cascadePerformance(argc, argv);
+            break;
+        case 14:
+            detection("..\\XMLCPU\\cascadeSHOG.xml", "..\\inputImages\\20170422135715126.Png", false);
+            break;
+        case 15:
+            detection("..\\XMLCPU\\cascade2.xml", "..\\inputImages\\20170422135715126.Png", false);
+            break;
+        case 16:
+            detection("..\\XMLCPU\\cascade2.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
+            break;
+        case 17:
+            detection("..\\XMLCPU\\cascade2.xml", "..\\inputImages\\20160428114934750.Png", false);
+            break;
+        case 18:
+            detection("..\\XMLCPU\\cascadeSHOG.xml", "..\\inputImages\\20160428114934750.Png", false);
+            break;
+        case 19:
+            detection("..\\XMLCPU\\cascadeSHOG.xml", "..\\inputImages\\SNO-7084R_192.168.1.100_80-Cam01_H.264_2048X1536_fps_30_20151115_202619.avi_2fps_002581.png", false);
+            break;
+        default:
+            break;
     }
 }
 
@@ -741,7 +782,7 @@ int main(int argc, char* argv[])
     //clock_t end = clock();
     //double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     //printf("Seconds %lf\n", elapsed_secs);
-    commands(argc, argv);
+    commands(argc, argv, 19);
 
     //std::chrono::time_point<std::chrono::system_clock> start, end;
     //start = std::chrono::system_clock::now();

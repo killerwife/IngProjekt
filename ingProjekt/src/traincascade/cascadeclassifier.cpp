@@ -142,7 +142,8 @@ bool CvCascadeClassifier::train( const string _cascadeDirName,
                                 const CvFeatureParams& _featureParams,
                                 const CvCascadeBoostParams& _stageParams,
                                 bool baseFormatSave,
-                                double acceptanceRatioBreakValue )
+                                double acceptanceRatioBreakValue,
+                                bool fallbackToSlowNegSamples)
 {
     {
         Parser parser;
@@ -222,7 +223,7 @@ bool CvCascadeClassifier::train( const string _cascadeDirName,
         cout << endl << "===== TRAINING " << i << "-stage =====" << endl;
         cout << "<BEGIN" << endl;
 
-        if ( !updateTrainingSet( requiredLeafFARate, tempLeafFARate ) )
+        if ( !updateTrainingSet( requiredLeafFARate, tempLeafFARate, fallbackToSlowNegSamples) )
         {
             cout << "Train dataset for temp stage can not be filled. "
                     "Branch training terminated." << endl;
@@ -313,17 +314,17 @@ int CvCascadeClassifier::predict( int sampleIdx )
     return 1;
 }
 
-bool CvCascadeClassifier::updateTrainingSet( double minimumAcceptanceRatio, double& acceptanceRatio)
+bool CvCascadeClassifier::updateTrainingSet( double minimumAcceptanceRatio, double& acceptanceRatio, bool fallbackToSlowNegSamples)
 {
     int64 posConsumed = 0, negConsumed = 0;
     imgReader.restart();
-    int posCount = fillPassedSamples( 0, numPos, true, 0, posConsumed );
+    int posCount = fillPassedSamples( 0, numPos, true, 0, posConsumed, fallbackToSlowNegSamples);
     if( !posCount )
         return false;
     cout << "POS count : consumed   " << posCount << " : " << (int)posConsumed << endl;
 
     int proNumNeg = cvRound( ( ((double)numNeg) * ((double)posCount) ) / numPos ); // apply only a fraction of negative samples. double is required since overflow is possible
-    int negCount = fillPassedSamples( posCount, proNumNeg, false, minimumAcceptanceRatio, negConsumed );
+    int negCount = fillPassedSamples( posCount, proNumNeg, false, minimumAcceptanceRatio, negConsumed, fallbackToSlowNegSamples);
     if ( !negCount )
         if ( !(negConsumed > 0 && ((double)negCount+1)/(double)negConsumed <= minimumAcceptanceRatio) )
             return false;
@@ -364,7 +365,7 @@ bool supportsMultiScale(int featureType)
     }
 }
 
-int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositive, double minimumAcceptanceRatio, int64& consumed )
+int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositive, double minimumAcceptanceRatio, int64& consumed, bool fallbackToSlowNegSamples)
 {
     int getcount = 0;
     Mat img(cascadeParams.winSize, CV_8UC1);
@@ -429,8 +430,13 @@ int CvCascadeClassifier::fillPassedSamples( int first, int count, bool isPositiv
                         isGetImg = true;
                 }
 
-                if(!isGetImg)
+                if (!isGetImg)
+                {
+                    if (isNotFirstStage && !fallbackToSlowNegSamples)
+                        return getcount;
+
                     isGetImg = imgReader.getNeg(img);
+                }
             }
 
             //bool isGetImg = isPositive ? imgReader.getPos(img) : imgReader.getNeg(img);
