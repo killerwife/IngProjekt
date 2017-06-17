@@ -1,0 +1,16 @@
+ciele
+podstatne zmenit zdoraz z informacii na co sa urobilo
+premostit nazov na prezentaciu
+zostrucnit
+Deskriptory a klasifikátory - rozbit/prepracovat
+indent
+cisla slidov
+zdroj obrazkov
+implementacia
+spojit adaboost a kaskadu
+zdroje experimentov
+cas si sledovat
+dataset zbezne
+Výber AdaBoostu a deskriptora - odlucit od deskriptorov
+tabulku opravit
+metriky vyhodnotenia
