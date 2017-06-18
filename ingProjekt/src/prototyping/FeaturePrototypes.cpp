@@ -20,7 +20,7 @@ void FeaturePrototypes::TestSHOG(cv::Mat& image)
     double* integral = new double[(rows + 1)*(cols + 1) * 8];
     const int sizeRows = 4, sizeCols = 4;
     const int stepRows = 1, stepCols = 1;
-    int histSize = (rows / stepRows - (sizeRows) / stepRows) * (cols / stepCols - (sizeCols) / stepCols);
+    int histSize = (rows / stepRows - (sizeRows) / stepRows + 1) * (cols / stepCols - (sizeCols) / stepCols + 1);
     int* histogram = new int[histSize * 8];
     ComputeSHOG(image,gradient,integral,histogram);
     printf("Gradient Image\n");
@@ -56,11 +56,11 @@ void FeaturePrototypes::TestSHOG(cv::Mat& image)
         printf("\n");
     }
 
-    const int histCols = (cols / stepCols - (sizeCols));
+    const int histCols = (cols / stepCols - (sizeCols) + 1);
     for (int l = 0; l < 8; l++)
     {
         printf("Orientation %d:\n", l + 1);
-        for (int i = 0; i < (rows / stepRows - (sizeRows) / stepRows); i++)
+        for (int i = 0; i < (rows / stepRows - (sizeRows) / stepRows + 1); i++)
         {
             for (int k = 0; k < histCols; k++)
             {
@@ -89,13 +89,23 @@ void FeaturePrototypes::ComputeHistFeat(cv::Mat& image)
 void FeaturePrototypes::test()
 {
     FeaturePrototypes testing;
-    const long rows = 25, cols = 25;
-    int* data = new int[rows * cols];
+    const long rows = 5, cols = 5;
+    char* data = new char[rows * cols];
     srand(time(nullptr));
     for (long i = 0; i < rows * cols; ++i)
         data[i] = rand() % 100;
 
-    cv::Mat image(cv::Size(cols, rows), CV_32S, data);
+    for (long i = 0; i < rows; i++)
+    {
+        for (long k = 0; k < cols; k++)
+        {
+            printf("%d ",data[i*cols + k]);
+        }
+        printf("\n");
+    }
+
+    cv::Mat image(cv::Size(cols, rows), CV_8U, data);
+    std::cout << image << std::endl;
     //std::cout << image << std::endl;
     outputTimer([&testing, &image]() {testing.TestSHOG(image); });
     //std::cout << image << std::endl;

@@ -45,13 +45,13 @@ void ComputeSHOG(const cv::Mat& image, float* gradient, double* integral, int* h
     tbb::parallel_for(size_t(0), size_t(8), [&](size_t i) { cv::integral(imageChannels[i], integralChannels[i]); });
     const int sizeRows = cell.height, sizeCols = cell.width;
     const int stepRows = step.height, stepCols = step.width;
-    int histSize = (rows / stepRows - sizeRows) * (cols / stepCols - sizeCols);
-    tbb::parallel_for(size_t(0), size_t(8), [&](size_t l) {
-        for (int i = 0; i < rows - sizeRows; i += stepRows)
+    int histSize = (rows / stepRows - sizeRows + 1) * (cols / stepCols - sizeCols + 1);
+    tbb::parallel_for(size_t(0), size_t(1), [&](size_t l) {
+        for (int i = 0; i < rows - sizeRows + 1; i += stepRows)
         {
-            for (int k = 0; k < cols - sizeCols; k += stepCols)
+            for (int k = 0; k < cols - sizeCols + 1; k += stepCols)
             {
-                histogram[l*histSize + i / stepRows*(cols - sizeCols) + k / stepCols] =
+                histogram[l*histSize + i / stepRows*(cols - sizeCols + 1) + k / stepCols] =
                     int(integral[(l*(rows + 1) + i)*(cols + 1) + k] + integral[(l*(rows + 1) + i + sizeRows)*(cols + 1) + k + sizeCols]
                         - integral[(l*(rows + 1) + i)*(cols + 1) + k + sizeCols] - integral[(l*(rows + 1) + i + sizeRows)*(cols + 1) + k]);
             }
