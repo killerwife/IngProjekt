@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <thread>
 #include "HaarTransform.h"
-#include "boost3.0/boost.h"
+#include "../boost3.0/boost.h"
 
 namespace CV
 {

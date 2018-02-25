@@ -1,6 +1,6 @@
 #include "FeaturePrototypes.h"
 #include <iostream>
-#include "SharedDefines\SharedDefines.h"
+#include "../SharedDefines/SharedDefines.h"
 #include "tbb/tbb.h"
 #include "tbb/task.h"
 

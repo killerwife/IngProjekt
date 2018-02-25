@@ -61,3 +61,5 @@ Temporary Items
 *.suo
 *.iobj
 *.ipdb
+*.ipch
+*.tmp

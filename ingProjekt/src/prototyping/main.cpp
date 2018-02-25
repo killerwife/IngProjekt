@@ -782,7 +782,7 @@ int main(int argc, char* argv[])
     //clock_t end = clock();
     //double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
     //printf("Seconds %lf\n", elapsed_secs);
-    commands(argc, argv, 6);
+    commands(argc, argv, -1);
 
     //std::chrono::time_point<std::chrono::system_clock> start, end;
     //start = std::chrono::system_clock::now();
